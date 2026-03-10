@@ -3,7 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:16
-    container_name: nest-postgres
+    container_name: nest-best-project
     restart: always
     environment:
       POSTGRES_USER: postgres
