@@ -8,6 +8,7 @@ export const userSelect = {
   role: true,
   createdAt: true,
   updatedAt: true,
+  revoked: true
 } as const;
 
 // тип безопасного пользователя (без пароля)

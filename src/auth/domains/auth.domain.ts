@@ -1,8 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { JwtPayload } from "./interfaces/jwtPayload.interface";
+import { JwtValidationResult } from "./interfaces/auth-domain.interface";
+import { type IAuthRepositoryService } from "./interfaces/authRepository.interface";
 @Injectable()
 export class AuthDomainService {
-    constructor(){}
+
+    constructor(
+      @Inject('IAuthRepositoryService')
+      private readonly authRepo: IAuthRepositoryService
+    ){}
     isUserCorrect(email: string, password: string) {
         if(!this.isEmailValid(email)){
             throw new Error('Incorrect emaiL!')
@@ -31,10 +37,24 @@ export class AuthDomainService {
   }
 
 
-  isJwtPayloadValid(payload: JwtPayload){
-    const { email, username, id } = payload; 
-    if(this.isEmailValid(email)) throw new Error('Payload incorrect email');
-    if(this.isUserNameValid(username)) throw new Error('Payload username incorrect');
-    if(!id) throw new Error('Id dont exist');
+async isJwtPayloadValid(payload: JwtPayload): Promise<JwtValidationResult> {
+
+  const { id } = payload;
+
+  if (!id) {
+    return { valid:false, reason:'invalid-id' }
   }
+
+  const user = await this.authRepo.findById(id);
+
+  if (!user) {
+    return { valid:false, reason:'invalid-user' }
+  }
+
+  if (user.revoked) {
+    return { valid:false, reason:'revoked' }
+  }
+
+  return { valid:true }
+}
 }

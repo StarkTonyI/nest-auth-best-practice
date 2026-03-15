@@ -7,10 +7,10 @@ import { ApiConfigModule } from "../configService/apiConfig.module"; // Пров
 import { AuthDomainService } from "./domains/auth.domain";
 import { CreateCommandHandler } from "./handler/create-auth.handler";
 import { CqrsModule } from "@nestjs/cqrs";
-import { AuthRepository } from "./services/auth-repository.service";
+import { AuthRepository } from "./repository/auth-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
-import { JwtStrategy } from "./guards/passport.guard";
+import { JwtGuard } from "./guards/jwt.guard";
 
 @Module({
     imports: [
@@ -34,7 +34,7 @@ import { JwtStrategy } from "./guards/passport.guard";
             provide: 'IAuthRepository',
             useClass: AuthRepository
         }, 
-         JwtStrategy
+        JwtGuard
     ], exports: [AuthDomainService, 'IAuthRepository']
 
 })

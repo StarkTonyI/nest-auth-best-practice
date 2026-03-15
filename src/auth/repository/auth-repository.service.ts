@@ -13,7 +13,7 @@ export class AuthRepository {
 
     async create(user: RegisterUserDto): Promise<SafeUser>{
         const { email, password, username, role } = user;
-        return await this.prisma.user.create({data: { email, password, role, username, refreshToken:'' },  select:this.select })
+        return await this.prisma.user.create({data: { email, password, role, username, refreshToken:'', revoked: true },  select:this.select })
     }
     async findById(id: string, withPassword: boolean = false){
         return await this.prisma.user.findUnique({

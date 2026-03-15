@@ -4,10 +4,9 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthDomainService } from "src/auth/domains/auth.domain";
 import { JwtPayload } from "src/auth/domains/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
-import { ExtractJwt } from "passport-jwt";
 import { Request } from "express";
 @Injectable()
-export class JwtStrategy implements CanActivate{
+export class JwtGuard implements CanActivate{
     constructor(
         private readonly jwt: JwtService,
         private readonly reflector: Reflector,
@@ -15,7 +14,7 @@ export class JwtStrategy implements CanActivate{
         private readonly domain: AuthDomainService,
     ){}
 
-    jwtFromReques(req: Request){
+    jwtFromRequest(req: Request){
         const authHeader = req.headers.authorization;
         if(authHeader && authHeader.startsWith('Bearer ')){
            return authHeader.split(' ')[1]
@@ -27,7 +26,7 @@ export class JwtStrategy implements CanActivate{
         const req = context.switchToHttp().getRequest();
         const reflector = this.reflector.getAllAndOverride("tokenType", [context.getClass(), context.getHandler()]) || 'access';
         const secret = reflector === 'access' ? this.config.authConfig.jwtSecret : this.config.authConfigRefresh.jwtSecret;
-        const token = this.jwtFromReques(req);
+        const token = this.jwtFromRequest(req);
         if(!token) throw new UnauthorizedException('No token');
 
         try{

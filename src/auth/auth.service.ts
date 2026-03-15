@@ -33,7 +33,7 @@ export class AuthService {
         const { acess_token, refresh_token } = await this.generatedTokend(user);
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10);
         try {
-            await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken})
+            await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken, revoked: false })
         }catch(err){
             throw new Error('Cannot update token')
         }
