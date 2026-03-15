@@ -10,5 +10,5 @@ export const ReqUser = createParamDecorator((reqData: ReqDecorator, ctx: Executi
     if(!reqData) throw new Error('Something get wrong');
     const req = ctx.switchToHttp().getRequest();
     const { user } = req;
-    console.log(user)
+    return user;
 })

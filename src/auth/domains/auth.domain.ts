@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-
+import { JwtPayload } from "./interfaces/jwtPayload.interface";
 @Injectable()
 export class AuthDomainService {
     constructor(){}
@@ -23,4 +23,18 @@ export class AuthDomainService {
     return emailRegex.test(email);
   }
 
+  isUserNameValid(username: string){
+    if(username.length < 8){
+      return false
+    }
+    return true;
+  }
+
+
+  isJwtPayloadValid(payload: JwtPayload){
+    const { email, username, id } = payload; 
+    if(this.isEmailValid(email)) throw new Error('Payload incorrect email');
+    if(this.isUserNameValid(username)) throw new Error('Payload username incorrect');
+    if(!id) throw new Error('Id dont exist');
+  }
 }

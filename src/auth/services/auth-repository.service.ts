@@ -31,8 +31,6 @@ export class AuthRepository {
     }
 
     async update(id: string, update: Partial<User>): Promise<SafeUser>{
-        console.log(id);
-        console.log(update)
         return await this.prisma.user.update({
             where:{
                 id: id

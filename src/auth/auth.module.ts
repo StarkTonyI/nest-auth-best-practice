@@ -10,6 +10,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { AuthRepository } from "./services/auth-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
+import { JwtStrategy } from "./guards/passport.guard";
 
 @Module({
     imports: [
@@ -32,7 +33,8 @@ import { ApiConfigServices } from "src/configService/apiConfig.service";
         {
             provide: 'IAuthRepository',
             useClass: AuthRepository
-        }
+        }, 
+         JwtStrategy
     ], exports: [AuthDomainService, 'IAuthRepository']
 
 })
