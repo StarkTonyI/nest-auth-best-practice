@@ -5,10 +5,23 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './database/dataBase.module';
 import { PrismaService } from './database/dataBase.service';
 import { ApiConfigModule } from './configService/apiConfig.module';
+import { ResponseModule } from './service/response/response.module';
+import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
+import { LogginInterceptor } from './interceptor/logger.interceptor';
+import { ResponseInterceptor } from './interceptor/response.interceptor';
 
 @Module({
-  imports: [AuthModule, PrismaModule, ApiConfigModule],
+  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, Reflector, 
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LogginInterceptor, // Nest сам найдет зависимости для него
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor, // И для этого тоже (ResponseService и Reflector)
+    },
+  ]
 })
 export class AppModule {}

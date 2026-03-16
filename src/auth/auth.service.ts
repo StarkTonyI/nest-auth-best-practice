@@ -3,21 +3,21 @@ import { AuthDomainService } from "./domains/auth.domain";
 import RegisterUserDto from "./dto/registerUser.dto";
 import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
 import { Inject, Injectable } from "@nestjs/common";
-import { type IAuthRepositoryService } from "./domains/interfaces/authRepository.interface";
+import { type IAuthRepository } from "./domains/interfaces/authRepository.interface";
 import { JwtService } from "@nestjs/jwt";
 import { SafeUser } from "src/types/prisma-user";
-import { bindCallback } from "rxjs";
 import * as bcrypt from 'bcrypt'
 import { ApiConfigServices } from "src/configService/apiConfig.service";
+import { ResponseService } from "src/service/response/response.service";
 @Injectable()
 export class AuthService {
     constructor(
         private readonly authDomain: AuthDomainService,
         private readonly commandBus: CommandBus,
         @Inject('IAuthRepository')
-        private readonly authRepo: IAuthRepositoryService,
+        private readonly authRepo: IAuthRepository,
         private readonly jwt: JwtService,
-        private readonly config: ApiConfigServices
+        private readonly config: ApiConfigServices,
     ){}
 
 
@@ -39,8 +39,8 @@ export class AuthService {
         }
 
         return {
-            data: {...user, acess_token, refresh_token}, 
-        };
+            acess_token, refresh_token, ...user 
+        }
     }
 
     async generatedTokend(auth: SafeUser){

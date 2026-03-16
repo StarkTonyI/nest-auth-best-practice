@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { JwtPayload } from "./interfaces/jwtPayload.interface";
 import { JwtValidationResult } from "./interfaces/auth-domain.interface";
-import { type IAuthRepositoryService } from "./interfaces/authRepository.interface";
+import { type IAuthRepository } from "./interfaces/authRepository.interface";
 @Injectable()
 export class AuthDomainService {
 
     constructor(
-      @Inject('IAuthRepositoryService')
-      private readonly authRepo: IAuthRepositoryService
+      @Inject('IAuthRepository')
+      private readonly authRepo: IAuthRepository
     ){}
     isUserCorrect(email: string, password: string) {
         if(!this.isEmailValid(email)){

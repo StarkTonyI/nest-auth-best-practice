@@ -2,7 +2,7 @@ import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CommandCreateAuthEvent } from "./events/create-auth.events";
 import { AuthDomainService } from "../domains/auth.domain";
-import { type IAuthRepositoryService } from "../domains/interfaces/authRepository.interface";
+import { type IAuthRepository } from "../domains/interfaces/authRepository.interface";
 import { CreateEventBus } from "../events/created-auth-event.event";
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
@@ -10,7 +10,7 @@ import { CreateEventBus } from "../events/created-auth-event.event";
 export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEvent> {
     constructor(private readonly domain: AuthDomainService,
         @Inject('IAuthRepository')
-        private readonly authRepo: IAuthRepositoryService,
+        private readonly authRepo: IAuthRepository,
         private readonly eventBus: EventBus
     ){};
    async execute(command: CommandCreateAuthEvent): Promise<any> {
