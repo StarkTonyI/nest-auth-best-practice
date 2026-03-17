@@ -7,7 +7,7 @@ export interface ApiResponse<T = any> {
     method?: string
 }
  interface errorMessage {
-    code: number;
+    code: string;
     details: string;
 }
 export class SuccessResponseDto implements ApiResponse{
@@ -32,7 +32,7 @@ export class ErrorResponseDto implements ApiResponse{
     timestamp: Date;
     path?: string | undefined;
     method?: string | undefined;
-    constructor(message: string, code: number, details: string, meta: any){
+    constructor(message: string, code: string, details: string, meta: any){
         this.message = message;
         this.error = {
             code, details

@@ -6,7 +6,7 @@ export class ResponseService {
     success(message: string, data: any, meta?: any): SuccessResponseDto{
         return new SuccessResponseDto(message, data, meta)
     }
-    error(message: string, code: number, details: string, meta?: any):ErrorResponseDto {
+    error(message: string, code: string, details: string, meta?: any):ErrorResponseDto {
         return new ErrorResponseDto(message, code, details, meta)
     }
     withRequest(reponse:ApiResponse, req: Request){

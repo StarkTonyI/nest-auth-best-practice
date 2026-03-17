@@ -6,9 +6,10 @@ import { PrismaModule } from './database/dataBase.module';
 import { PrismaService } from './database/dataBase.service';
 import { ApiConfigModule } from './configService/apiConfig.module';
 import { ResponseModule } from './service/response/response.module';
-import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { LogginInterceptor } from './interceptor/logger.interceptor';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
+import { ApiExeptionFilter } from './filters/api-exception.filter';
 
 @Module({
   imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule],
@@ -22,6 +23,10 @@ import { ResponseInterceptor } from './interceptor/response.interceptor';
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor, // И для этого тоже (ResponseService и Reflector)
     },
+    {
+      provide: APP_FILTER,
+      useClass: ApiExeptionFilter
+    }
   ]
 })
 export class AppModule {}
