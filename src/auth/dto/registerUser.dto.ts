@@ -12,4 +12,6 @@ export default class RegisterUserDto {
     password: string;
     @IsBoolean()
     revoked: boolean;
+    @IsString()
+    lastname: string;
 }

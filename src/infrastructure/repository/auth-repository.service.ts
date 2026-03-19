@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/database/dataBase.service";
-import RegisterUserDto from "../dto/registerUser.dto"; 
+import RegisterUserDto from "../../auth/dto/registerUser.dto"; 
 import { SafeUser, userSelect, userSelectWithPassword, UserWithPassword } from '../../types/prisma-user'
 import { User } from "@prisma/client";
-import { IAuthRepository } from "../domains/interfaces/authRepository.interface";
+import { IAuthRepository } from "../../interfaces/repository/auth-repository";
 
 @Injectable()
 export class AuthRepository implements IAuthRepository{
@@ -28,10 +28,7 @@ export class AuthRepository implements IAuthRepository{
                 email: email
             }, select: withPassword ? this.selectWithPassword : this.select
         }))
-       
-
     }
-
     async update(id: string, update: Partial<User>): Promise<SafeUser>{
         return await this.prisma.user.update({
             where:{
@@ -40,18 +37,13 @@ export class AuthRepository implements IAuthRepository{
             data: update, select: this.select
         })
     }
+    async delete(id: string): Promise<SafeUser>{
+        return this.prisma.user.delete({
+            where:{
+                id
+            },
+            select: this.select
+        })
+    }   
 
-
-
-
-
-
-
-
-    
 }
-
-
-
-
-

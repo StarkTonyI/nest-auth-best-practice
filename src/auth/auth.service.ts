@@ -1,9 +1,9 @@
 import { CommandBus } from "@nestjs/cqrs";
-import { AuthDomainService } from "./domains/auth.domain";
+import { AuthDomainService } from "../domains/auth.domain";
 import RegisterUserDto from "./dto/registerUser.dto";
 import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
 import { Inject, Injectable } from "@nestjs/common";
-import { type IAuthRepository } from "./domains/interfaces/authRepository.interface";
+import { type IAuthRepository } from "../interfaces/repository/auth-repository";
 import { JwtService } from "@nestjs/jwt";
 import { SafeUser } from "src/types/prisma-user";
 import * as bcrypt from 'bcrypt'
@@ -22,7 +22,7 @@ export class AuthService {
 
 
     async register(payload: RegisterUserDto){
-        const { email, password, role, username } = payload;
+        const { email, password } = payload;
     
         this.authDomain.isUserCorrect(email, password);
         await this.commandBus.execute(new CommandCreateAuthEvent(payload))
@@ -53,4 +53,7 @@ export class AuthService {
         }
     }
 }
+
+
+
 

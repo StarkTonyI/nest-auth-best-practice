@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
-import { AuthDomainService } from "src/auth/domains/auth.domain";
-import { JwtPayload } from "src/auth/domains/interfaces/jwtPayload.interface";
+import { AuthDomainService } from "src/domains/auth.domain";
+import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
 @Injectable()

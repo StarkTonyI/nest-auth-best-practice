@@ -1,9 +1,9 @@
-import { ConflictException, HttpException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CommandCreateAuthEvent } from "./events/create-auth.events";
-import { AuthDomainService } from "../domains/auth.domain";
-import { type IAuthRepository } from "../domains/interfaces/authRepository.interface";
-import { CreateEventBus } from "../events/created-auth-event.event";
+import { AuthDomainService } from "../../domains/auth.domain";
+import { type IAuthRepository } from "../../interfaces/repository/auth-repository"
+import { authUserCreated } from "../events/auth-user-created.event";
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
 
@@ -15,14 +15,14 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
     ){};
    async execute(command: CommandCreateAuthEvent): Promise<any> {
     const { registerUser } = command;
-    const { username, email, password, role } = registerUser;
+    const { username, email, password, role, lastname } = registerUser;
     this.domain.isUserCorrect(email, password)
     const userExist = await this.authRepo.findByEmail(email);
     if(userExist){
-        throw new NotFoundException("User dont exist")  
+        throw new ConflictException("User already exist!")  
     }
     const { id} = await this.authRepo.create(registerUser)
-    this.eventBus.publish(new CreateEventBus(id, username, email, password, role))
     
+    this.eventBus.publish(new authUserCreated(username, lastname, id))
    }
 }

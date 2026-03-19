@@ -10,9 +10,10 @@ import { APP_FILTER, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { LogginInterceptor } from './interceptor/logger.interceptor';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { ApiExeptionFilter } from './filters/api-exception.filter';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule],
+  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, Reflector, 
     {

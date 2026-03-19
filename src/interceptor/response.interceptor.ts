@@ -11,8 +11,7 @@ export class ResponseInterceptor implements NestInterceptor {
     
         return next.handle()
         .pipe(map((data)=> {
-            console.log('This check:', this);
-             const reflector = this.reflector.get(RESPONSE_MESSAGE, context.getHandler())
+            const reflector = this.reflector.get(RESPONSE_MESSAGE, context.getHandler())
             return this.response.success(reflector, data ?? null, request)
         }))
     }

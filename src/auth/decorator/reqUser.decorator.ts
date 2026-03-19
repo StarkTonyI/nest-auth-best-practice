@@ -5,10 +5,8 @@ interface ReqDecorator {
     email: string;
 }
 
-
-export const ReqUser = createParamDecorator((reqData: ReqDecorator, ctx: ExecutionContext)=>{
-    if(!reqData) throw new Error('Something get wrong');
+export const ReqUser = createParamDecorator((reqData: keyof ReqDecorator  | null, ctx: ExecutionContext)=>{
     const req = ctx.switchToHttp().getRequest();
     const { user } = req;
-    return user;
+    return reqData ? user[reqData] : user;
 })

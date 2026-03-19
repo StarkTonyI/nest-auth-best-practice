@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { JwtPayload } from "./interfaces/jwtPayload.interface";
-import { JwtValidationResult } from "./interfaces/auth-domain.interface";
-import { type IAuthRepository } from "./interfaces/authRepository.interface";
+import { JwtPayload } from "../interfaces/jwtPayload.interface";
+import { JwtValidationResult } from "../interfaces/auth-domain.interface";
+import { type IAuthRepository } from "../interfaces/repository/auth-repository";
 @Injectable()
 export class AuthDomainService {
 
