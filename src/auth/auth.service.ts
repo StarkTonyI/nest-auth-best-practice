@@ -8,7 +8,7 @@ import { JwtService } from "@nestjs/jwt";
 import { SafeUser } from "src/types/prisma-user";
 import * as bcrypt from 'bcrypt'
 import { ApiConfigServices } from "src/configService/apiConfig.service";
-import { ResponseService } from "src/service/response/response.service";
+import { LoggerService } from "./services/logger.service";
 @Injectable()
 export class AuthService {
     constructor(
@@ -18,23 +18,28 @@ export class AuthService {
         private readonly authRepo: IAuthRepository,
         private readonly jwt: JwtService,
         private readonly config: ApiConfigServices,
+        private readonly logger: LoggerService
     ){}
 
 
     async register(payload: RegisterUserDto){
+        const context = { method: "register", module: "AuthService" }
         const { email, password } = payload;
     
         this.authDomain.isUserCorrect(email, password);
         await this.commandBus.execute(new CommandCreateAuthEvent(payload))
         const user = await this.authRepo.findByEmail(email)
         if(!user){
+            this.logger.log(`Something get wrong, user not created or exist, with email: ${email}`, context)
             throw new Error("User dont created!")
         }
         const { acess_token, refresh_token } = await this.generatedTokend(user);
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10);
         try {
             await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken, revoked: false })
+            this.logger.log(`Assign token succesfull for id: ${user.id}`)
         }catch(err){
+             this.logger.log(`Cannot assign tokens for id: ${user.id}`)
             throw new Error('Cannot update token')
         }
 

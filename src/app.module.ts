@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -11,11 +11,13 @@ import { LogginInterceptor } from './interceptor/logger.interceptor';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { ApiExeptionFilter } from './filters/api-exception.filter';
 import { ProfileModule } from './profile/profile.module';
+import { LoggerService } from './auth/services/logger.service';
 
+@Global()
 @Module({
   imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService, Reflector, 
+  providers: [AppService, PrismaService, Reflector, LoggerService, 
     {
       provide: APP_INTERCEPTOR,
       useClass: LogginInterceptor, // Nest сам найдет зависимости для него
@@ -28,6 +30,7 @@ import { ProfileModule } from './profile/profile.module';
       provide: APP_FILTER,
       useClass: ApiExeptionFilter
     }
-  ]
+  ],
+  exports: [LoggerService]
 })
 export class AppModule {}

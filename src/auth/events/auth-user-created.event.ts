@@ -1,7 +1,9 @@
 export class authUserCreated {
     constructor(
-        public authId: string,
         public username: string,
-        public lastname: string
+        public lastname: string,
+        public authId: string
     ){}
 }
+
+

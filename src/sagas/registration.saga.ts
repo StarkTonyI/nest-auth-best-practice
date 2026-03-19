@@ -22,7 +22,7 @@ profileCreated = (events$: Observable<any>):Observable<ICommand> => {
         ofType(DeleteProfileEvent),
         map((event)=> {
             console.log(event);
-            return new DeleteProfileAndUserEvent(event.authId, event.id)
+            return new DeleteProfileAndUserEvent(event.authId)
         })
     )
 }
