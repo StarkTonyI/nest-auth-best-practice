@@ -4,7 +4,6 @@ import { ResponseService } from "src/service/response/response.service";
 
 @Catch()
 export class ApiExeptionFilter implements ExceptionFilter {
-    private readonly logger = new Logger('ExceptionVisualizer');
     constructor(private readonly responseService: ResponseService){}
     catch(exception: any, host: ArgumentsHost) {
         
@@ -21,15 +20,13 @@ export class ApiExeptionFilter implements ExceptionFilter {
       if(exception instanceof HttpException){
             status = exception.getStatus();
             const responseExeption = exception.getResponse() as any;
-            console.log(status)
-            console.log(responseExeption)
             if(exception instanceof BadRequestException){
                 if(Array.isArray(responseExeption.message)){
                     message = 'Validation failed',
                     code = 'VALIDATION_ERROR',
                     details = responseExeption.message
                 }else if(typeof responseExeption.message === 'string'){
-                    message = 'VALIDATION_DONT_WORK',
+                    message = 'VALIDATOIN_FAILER',
                     code = 'VALIDATION_ERROR',
                     details = [responseExeption.message];
                 }else{

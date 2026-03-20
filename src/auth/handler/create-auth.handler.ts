@@ -5,6 +5,7 @@ import { AuthDomainService } from "../../domains/auth.domain";
 import { type IAuthRepository } from "../../interfaces/repository/auth-repository"
 import { authUserCreated } from "../events/auth-user-created.event";
 import { LoggerService } from "../services/logger.service";
+import { Prisma } from "@prisma/client";
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
 
@@ -18,7 +19,7 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
    async execute(command: CommandCreateAuthEvent): Promise<any> {
     const context = { method: 'CreateCommandHandler', module: "method" };
     const { registerUser } = command;
-    const { username, email, password, lastname } = registerUser;
+    const { email, password } = registerUser;
 
     this.logger.log(`Registration user started: ${email}`, context);
 
@@ -31,10 +32,19 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
         throw new ConflictException("User already exist!")  
     }
 
-    const { id } = await this.authRepo.create(registerUser)
-
-    this.logger.log(`User successfull exist with ID - ${id}`)
+    try {
+        this.authRepo.create(registerUser);
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // P2002 — это код Prisma для Unique constraint failed
+        if (e.code === 'P2002') {
+        throw new ConflictException('Email already exists'); 
+    }
+  }
+    // Если ошибка неизвестна, прокидываем дальше, пусть упадет в 500
+  throw e; 
+}   
     
-    this.eventBus.publish(new authUserCreated(username, lastname, id))
+
    }
 }

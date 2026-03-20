@@ -27,13 +27,14 @@ export class JwtGuard implements CanActivate{
         const reflector = this.reflector.getAllAndOverride("tokenType", [context.getClass(), context.getHandler()]) || 'access';
         const secret = reflector === 'access' ? this.config.authConfig.jwtSecret : this.config.authConfigRefresh.jwtSecret;
         const token = this.jwtFromRequest(req);
-        if(!token) throw new UnauthorizedException('No token');
+        if(!token) throw new UnauthorizedException('Token not provided');
 
         try{
             const payloadJwt = await this.jwt.verifyAsync(token, {
                 secret: secret, 
             }) as JwtPayload;
-            this.domain.isJwtPayloadValid(payloadJwt);
+            const domainResult = await this.domain.isJwtPayloadValid(payloadJwt);
+            if(!domainResult.valid) return false;
             req['user'] = payloadJwt as JwtPayload;
             return true;
             

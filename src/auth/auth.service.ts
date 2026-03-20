@@ -2,7 +2,7 @@ import { CommandBus } from "@nestjs/cqrs";
 import { AuthDomainService } from "../domains/auth.domain";
 import RegisterUserDto from "./dto/registerUser.dto";
 import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { type IAuthRepository } from "../interfaces/repository/auth-repository";
 import { JwtService } from "@nestjs/jwt";
 import { SafeUser } from "src/types/prisma-user";
@@ -31,7 +31,7 @@ export class AuthService {
         const user = await this.authRepo.findByEmail(email)
         if(!user){
             this.logger.log(`Something get wrong, user not created or exist, with email: ${email}`, context)
-            throw new Error("User dont created!")
+            throw new Error("User not found after creation!")
         }
         const { acess_token, refresh_token } = await this.generatedTokend(user);
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10);
@@ -39,10 +39,9 @@ export class AuthService {
             await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken, revoked: false })
             this.logger.log(`Assign token succesfull for id: ${user.id}`)
         }catch(err){
-             this.logger.log(`Cannot assign tokens for id: ${user.id}`)
-            throw new Error('Cannot update token')
+            this.logger.log(`Cannot assign tokens for id: ${user.id}`)
+            throw new Error('Cannot add token')
         }
-
         return {
             acess_token, refresh_token, ...user 
         }

@@ -14,7 +14,7 @@ export class AuthDomainService {
             throw new Error('Incorrect emaiL!')
         }
         if(!this.isPasswordValid(password)){
-            throw new Error('Incorrect emaiL!')
+            throw new Error('Incorrect password!')
         }
     }
 

@@ -20,13 +20,12 @@ export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandl
 
         this.logger.log(`Creation profile with authId - ${authId} started...`, context)
 
-        this.domain.createProfileEntity({username, lastname, authId})
+        const validatedProfile = this.domain.createProfileEntity({username, lastname, authId})
+
         let profile:any;
 
         try {
-            profile = await this.profile.create({
-                username, lastname, authId
-            })
+            profile = await this.profile.create(validatedProfile)
             this.logger.log(`Profile successfully created with id - ${profile.id}`)
         }catch(err){
             this.logger.warn(`Profile creation failed, with user - ${authId} cause: ${err.message}`)
