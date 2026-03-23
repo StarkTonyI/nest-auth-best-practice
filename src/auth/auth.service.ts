@@ -2,20 +2,19 @@ import { CommandBus } from "@nestjs/cqrs";
 import { AuthDomainService } from "../domains/auth.domain";
 import RegisterUserDto from "./dto/registerUser.dto";
 import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
-import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { type IAuthRepository } from "../interfaces/repository/auth-repository";
 import { JwtService } from "@nestjs/jwt";
 import { SafeUser } from "src/types/prisma-user";
 import * as bcrypt from 'bcrypt'
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { LoggerService } from "../services/logger.service";
-import { AsyncSubject } from "rxjs";
 import LoginUserDto from "./dto/loginUser.dro";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
-import { Request, Response } from "express";
-import { JwtPayload } from "src/interfaces/jwtPayload.interface";
+import { Response } from "express";
 @Injectable()
 export class AuthService {
+   
     constructor(
         private readonly authDomain: AuthDomainService,
         private readonly commandBus: CommandBus,
@@ -27,7 +26,6 @@ export class AuthService {
         private readonly config: ApiConfigServices,
         private readonly logger: LoggerService
     ){}
-
 
     async register(payload: RegisterUserDto, res: Response){
         const context = { method: "register", module: "AuthService" }
