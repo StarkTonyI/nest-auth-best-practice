@@ -4,8 +4,8 @@ import { CommandCreateAuthEvent } from "./events/create-auth.events";
 import { AuthDomainService } from "../../domains/auth.domain";
 import { type IAuthRepository } from "../../interfaces/repository/auth-repository"
 import { authUserCreated } from "../events/auth-user-created.event";
-import { LoggerService } from "../services/logger.service";
-import { Prisma } from "@prisma/client";
+import { LoggerService } from "../../services/logger.service";
+import * as bcrypt from 'bcrypt'
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
 
@@ -17,34 +17,24 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
         private readonly logger: LoggerService
     ){};
    async execute(command: CommandCreateAuthEvent): Promise<any> {
-    const context = { method: 'CreateCommandHandler', module: "method" };
+    const context = { method: 'Register user', module: "CreateCommandHandler" };
     const { registerUser } = command;
-    const { email, password } = registerUser;
+    const { email, password, username, lastname } = registerUser;
 
     this.logger.log(`Registration user started: ${email}`, context);
 
     this.domain.isUserCorrect(email, password)
 
-    const userExist = await this.authRepo.findByEmail(email);
+    const userExist = await this.authRepo.findByEmail(email)
 
     if(userExist){
         this.logger.warning(`Registraion failed - user already exist: ${email}`, context)
         throw new ConflictException("User already exist!")  
     }
-
-    try {
-        this.authRepo.create(registerUser);
-    } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // P2002 — это код Prisma для Unique constraint failed
-        if (e.code === 'P2002') {
-        throw new ConflictException('Email already exists'); 
-    }
-  }
-    // Если ошибка неизвестна, прокидываем дальше, пусть упадет в 500
-  throw e; 
-}   
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const { id } = await this.authRepo.create({...registerUser, password: hashedPassword});
     
+    this.eventBus.publish(new authUserCreated(username, lastname, id ))
 
    }
 }

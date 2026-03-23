@@ -11,7 +11,7 @@ import { LogginInterceptor } from './interceptor/logger.interceptor';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { ApiExeptionFilter } from './filters/api-exception.filter';
 import { ProfileModule } from './profile/profile.module';
-import { LoggerService } from './auth/services/logger.service';
+import { LoggerService } from './services/logger.service';
 
 @Global()
 @Module({
@@ -34,3 +34,16 @@ import { LoggerService } from './auth/services/logger.service';
   exports: [LoggerService]
 })
 export class AppModule {}
+
+
+
+
+
+
+
+
+
+
+
+
+

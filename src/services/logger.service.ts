@@ -9,7 +9,7 @@ export class Context {
 export class LoggerService extends Logger {
     constructor(private readonly config: ApiConfigServices){super()}
 
-    logger(message: string, context: Context){
+    logger(message: string, context?: Context){
         const standtart = {
             message,
             host: this.config.portConfig,
@@ -20,7 +20,7 @@ export class LoggerService extends Logger {
         return super.log(data)
     }
 
-    err(message: string, context: Context){
+    err(message: string, context?: Context){
         const standtart = {
             message,
             host: this.config.portConfig,
@@ -29,9 +29,9 @@ export class LoggerService extends Logger {
         }
         const data = { standtart, ...context }
         return super.error(data)
-    }
+}
 
-    warning(message: unknown, context: Context): void {
+    warning(message: unknown, context?: Context): void {
         const standtart = {
             message,
             host: this.config.portConfig,

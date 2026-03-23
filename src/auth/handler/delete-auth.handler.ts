@@ -3,7 +3,7 @@ import { DeleteProfileAndUserEvent } from "./events/delete-auth.events";
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { type IAuthRepository } from "src/interfaces/repository/auth-repository";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
-import { LoggerService } from "../services/logger.service";
+import { LoggerService } from "../../services/logger.service";
 
 @Injectable()
 @CommandHandler(DeleteProfileAndUserEvent)

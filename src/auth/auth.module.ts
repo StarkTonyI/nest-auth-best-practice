@@ -11,6 +11,7 @@ import { AuthRepository } from "../infrastructure/repository/auth-repository.ser
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { JwtGuard } from "./guards/jwt.guard";
+import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 @Module({
     imports: [
         CqrsModule,
@@ -33,8 +34,12 @@ import { JwtGuard } from "./guards/jwt.guard";
             provide: 'IAuthRepository',
             useClass: AuthRepository
         }, 
+        {
+            provide: 'IProfileRepository',
+            useClass: ProfileRepository
+        }, 
         JwtGuard
-    ], exports: [AuthDomainService, 'IAuthRepository']
+    ], exports: ['IAuthRepository','IProfileRepository']
 
 })
 export class AuthModule {}

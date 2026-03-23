@@ -2,10 +2,11 @@ import { ICommand, ofType, Saga } from "@nestjs/cqrs";
 import { map, Observable } from "rxjs";
 import { authUserCreated } from "src/auth/events/auth-user-created.event";
 import { DeleteProfileAndUserEvent } from "src/auth/handler/events/delete-auth.events";
-import { LoggerService } from "src/auth/services/logger.service";
+import { LoggerService } from "src/services/logger.service";
 import { CreateProfileHandlerEvent } from "src/profile/handler/events/createProfile.events";
 import { DeleteProfileEvent } from "src/profile/handler/events/deleteProfile.event";
-
+import { Injectable } from "@nestjs/common";
+@Injectable()
 export class RegistrationSaga {
     constructor(private readonly logger: LoggerService){}
 @Saga()

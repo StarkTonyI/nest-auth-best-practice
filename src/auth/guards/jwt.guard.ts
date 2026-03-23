@@ -5,6 +5,7 @@ import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
+import { ref } from "process";
 @Injectable()
 export class JwtGuard implements CanActivate{
     constructor(
@@ -23,9 +24,19 @@ export class JwtGuard implements CanActivate{
     }
 
     async canActivate(context: ExecutionContext) {
-        const req = context.switchToHttp().getRequest();
+        const req = context.switchToHttp().getRequest() as Request;
         const reflector = this.reflector.getAllAndOverride("tokenType", [context.getClass(), context.getHandler()]) || 'access';
-        const secret = reflector === 'access' ? this.config.authConfig.jwtSecret : this.config.authConfigRefresh.jwtSecret;
+        const secret = this.config.authConfig.jwtSecret;
+        console.log(reflector)
+        if(reflector === 'refresh'){
+            const token = req.cookies?.["refresh_token"]
+            if(!token) throw new UnauthorizedException("No cookie");
+            const user = await this.jwt.verifyAsync(token, { secret: this.config.authConfigRefresh.jwtSecret })
+            req['rawToken'] = token;
+            req['user'] = user;
+            return true
+        }
+
         const token = this.jwtFromRequest(req);
         if(!token) throw new UnauthorizedException('Token not provided');
 

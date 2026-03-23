@@ -4,7 +4,7 @@ import { ProfileDomainService } from "src/domains/profile.domain";
 import { Inject } from "@nestjs/common";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { DeleteProfileEvent } from "./events/deleteProfile.event"
-import { LoggerService } from "src/auth/services/logger.service";
+import { LoggerService } from "src/services/logger.service";
 
 @CommandHandler(CreateProfileHandlerEvent)
 export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandlerEvent>{
