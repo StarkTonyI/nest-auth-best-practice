@@ -1,18 +1,23 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
-import { ref } from "process";
+import { AuthRepository } from "src/infrastructure/repository/auth-repository.service";
+import { SafeUser } from "src/types/prisma-user";
+import { REQ } from "../enums/auth.enum";
+import { LoggerService } from "src/services/logger.service";
 @Injectable()
-export class JwtGuard implements CanActivate{
+export class AccessJwtGuard implements CanActivate{
     constructor(
         private readonly jwt: JwtService,
-        private readonly reflector: Reflector,
         private readonly config: ApiConfigServices,
         private readonly domain: AuthDomainService,
+        private readonly logger: LoggerService,
+        @Inject('IAuthRepository')
+        private readonly authRepo: AuthRepository
     ){}
 
     jwtFromRequest(req: Request){
@@ -24,29 +29,28 @@ export class JwtGuard implements CanActivate{
     }
 
     async canActivate(context: ExecutionContext) {
+        const methods = { method: "Access token", module:"Access guard" };
         const req = context.switchToHttp().getRequest() as Request;
-        const reflector = this.reflector.getAllAndOverride("tokenType", [context.getClass(), context.getHandler()]) || 'access';
         const secret = this.config.authConfig.jwtSecret;
-        console.log(reflector)
-        if(reflector === 'refresh'){
-            const token = req.cookies?.["refresh_token"]
-            if(!token) throw new UnauthorizedException("No cookie");
-            const user = await this.jwt.verifyAsync(token, { secret: this.config.authConfigRefresh.jwtSecret })
-            req['rawToken'] = token;
-            req['user'] = user;
-            return true
-        }
-
+     
         const token = this.jwtFromRequest(req);
-        if(!token) throw new UnauthorizedException('Token not provided');
+        if(!token) {
+            this.logger.log("Token is not provided", methods)
+            throw new UnauthorizedException;
+        }
 
         try{
             const payloadJwt = await this.jwt.verifyAsync(token, {
                 secret: secret, 
             }) as JwtPayload;
-            const domainResult = await this.domain.isJwtPayloadValid(payloadJwt);
-            if(!domainResult.valid) return false;
-            req['user'] = payloadJwt as JwtPayload;
+            
+
+            if(!payloadJwt.id){
+                this.logger.warn("Invalid payload", methods)
+                throw new UnauthorizedException;
+            }
+            req[REQ.user] = payloadJwt;
+
             return true;
             
         }catch(err){

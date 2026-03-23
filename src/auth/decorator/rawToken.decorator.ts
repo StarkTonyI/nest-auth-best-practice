@@ -2,6 +2,8 @@ import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 
 export const RawToken = createParamDecorator((data: unknown, execute: ExecutionContext)=>{
     const req = execute.switchToHttp().getRequest();
-    return req.rawToken;
+    console.log('raw token');
+    console.log(req.rawRefresh)
+    return req.rawRefresh;
 })
 

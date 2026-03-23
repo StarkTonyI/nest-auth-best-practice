@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { JwtPayload } from "../interfaces/jwtPayload.interface";
 import { JwtValidationResult } from "../interfaces/auth-domain.interface";
 import { type IAuthRepository } from "../interfaces/repository/auth-repository";
+import { SafeUser } from "src/types/prisma-user";
 @Injectable()
 export class AuthDomainService {
 
@@ -37,23 +38,21 @@ export class AuthDomainService {
   }
 
 
-async isJwtPayloadValid(payload: JwtPayload): Promise<JwtValidationResult> {
-
+async isJwtPayloadValid(payload: JwtPayload, user: SafeUser | null = null): Promise<JwtValidationResult> {
   const { id } = payload;
-
   if (!id) {
     return { valid:false, reason:'invalid-id' }
   }
 
-  const user = await this.authRepo.findById(id);
-
-  if (!user) {
-    return { valid:false, reason:'invalid-user' }
+    if (!user) {
+      return { valid:false, reason:'invalid-user' }
   }
-
   if (user.revoked) {
     return { valid:false, reason:'revoked' }
   }
+
+
+
 
   return { valid:true }
 }

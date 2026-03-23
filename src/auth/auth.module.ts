@@ -10,8 +10,9 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { AuthRepository } from "../infrastructure/repository/auth-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
-import { JwtGuard } from "./guards/jwt.guard";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
+import { AccessJwtGuard } from "./guards/access.guard";
+import { RefreshJwtGuard } from "./guards/refresh.guard";
 @Module({
     imports: [
         CqrsModule,
@@ -38,7 +39,8 @@ import { ProfileRepository } from "src/infrastructure/repository/profile-reposit
             provide: 'IProfileRepository',
             useClass: ProfileRepository
         }, 
-        JwtGuard
+        AccessJwtGuard, 
+        RefreshJwtGuard
     ], exports: ['IAuthRepository','IProfileRepository']
 
 })

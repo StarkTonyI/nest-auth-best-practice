@@ -115,48 +115,30 @@ export class AuthService {
         }
     }
 
-    async refreshToken(req: Request, refreshToken: string){
+    async refreshToken(user: SafeUser, refreshToken: string){
         const context = { module: 'AuthService', method: 'refreshToken' };
         this.logger.log("Refresh logger started..", context);
-        const user = req.user as JwtPayload;
-        
-        if(!user) {
-            throw new UnauthorizedException
-        };
-        const userFromBase = await this.authRepo.findById(user?.id);
-        if(!userFromBase) {
-            this.logger.log("Cant find user in base", context)
-            throw new UnauthorizedException("Cant Refresh token");
-        }
-        if(userFromBase.revoked) {
-            this.logger.log("User alredy revoked", context)
-            throw new UnauthorizedException("Cant Refresh token.");
-        }
-        const compare = await bcrypt.compare(refreshToken, userFromBase.refreshToken)
+     
+        console.log(refreshToken)
+        console.log(user.refreshToken)
+
+        const compare = await bcrypt.compare(refreshToken, user.refreshToken)
 
         if(!compare){
             this.logger.log("Tokens incorrect", context)
              throw new UnauthorizedException("Cant Refresh token");
         }
 
-        const { access_token, refresh_token } = await this.generatedTokens(userFromBase)
+        const { access_token, refresh_token } = await this.generatedTokens(user)
 
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10)
-        await this.authRepo.update(userFromBase.id, { refreshToken: hashedRefreshToken, revoked: false })
+        await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken, revoked: false })
 
-        this.logger.log(`Refresh token succesully ended for email: ${userFromBase.email} `, context)
+        this.logger.log(`Refresh token succesully ended for email: ${user.email} `, context)
         return {
             access_token, 
             refresh_token
         }
-    }
-
-     tokenFromReq(req: Request){
-        const header = req.headers.authorization;
-        if(header && header.startsWith('Bearer ')){
-            return header.split(' ')[1]
-        }
-        return undefined;
     }
 
 }

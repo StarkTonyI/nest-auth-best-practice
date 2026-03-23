@@ -1,8 +1,8 @@
 import { Controller, Get, Inject, UseGuards } from "@nestjs/common";
 import { ResponseService } from "src/service/response/response.service";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
-import { JwtGuard } from "src/auth/guards/jwt.guard";
 import { ReqUser } from "src/auth/decorator/reqUser.decorator";
+import { AccessJwtGuard } from "src/auth/guards/access.guard";
 
 @Controller('profile')
 export class ProfileController {
@@ -11,7 +11,7 @@ export class ProfileController {
         private readonly profileService: iProfileRepository,
         private readonly response: ResponseService){}
 
-    @UseGuards(JwtGuard)
+    @UseGuards(AccessJwtGuard)
     @Get('/hello')
     hello(){
         return { 'Hello there': 'Hey hey everyone' }
