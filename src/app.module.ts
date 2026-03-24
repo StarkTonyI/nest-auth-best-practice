@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -12,6 +12,10 @@ import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { ApiExeptionFilter } from './filters/api-exception.filter';
 import { ProfileModule } from './profile/profile.module';
 import { LoggerService } from './services/logger.service';
+import { LoggerMiddleware } from './middleware/logger.middleware';
+import { RequestIdMiddleware } from './middleware/request-id.middleware';
+import { ProfileController } from './profile/profile.controller';
+import { AuthController } from './auth/auth.controller';
 
 @Global()
 @Module({
@@ -33,7 +37,12 @@ import { LoggerService } from './services/logger.service';
   ],
   exports: [LoggerService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware, RequestIdMiddleware)
+    .forRoutes(ProfileController, AuthController)
+  }
+}
 
 
 

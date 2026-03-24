@@ -52,5 +52,9 @@ export class ApiConfigServices {
         jwtExpirationTime: this.getDuration('JWT_EXPIRATION_TIME_REFRESH'), 
     };
 }
+    get NodeENV(){
+        return this.get("NODE_ENV") ?? "development"
+        
+    }
 
 }

@@ -68,8 +68,6 @@ export class AuthService {
         if(!userExist) throw new NotFoundException("User is not exist");
 
         if('password' in userExist){
-            console.log(password)
-            console.log(userExist.password)
             const ismathch = await bcrypt.compare(password, userExist.password);
             if(!ismathch) throw new UnauthorizedException('Invalid email or password');
         }else throw new Error('Unexpected user type: no password');
@@ -116,9 +114,6 @@ export class AuthService {
     async refreshToken(user: SafeUser, refreshToken: string){
         const context = { module: 'AuthService', method: 'refreshToken' };
         this.logger.log("Refresh logger started..", context);
-     
-        console.log(refreshToken)
-        console.log(user.refreshToken)
 
         const compare = await bcrypt.compare(refreshToken, user.refreshToken)
 
