@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/database/dataBase.service";
-import RegisterUserDto from "../../auth/dto/registerUser.dto"; 
 import { SafeUser, userSelect, userSelectWithPassword, UserWithPassword } from '../../types/prisma-user'
 import { Prisma, User } from "@prisma/client";
 import { IAuthRepository } from "../../interfaces/repository/auth-repository";
+import RegisterUserDto from "src/dto/request/auth/registerUser.dto";
 
 @Injectable()
 export class AuthRepository implements IAuthRepository{

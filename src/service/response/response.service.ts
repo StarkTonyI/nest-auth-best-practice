@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Request } from "express";
-import { ApiResponse, ErrorResponseDto, SuccessResponseDto } from "src/dto/common/auth-reponse-common.dto";
+import { ApiResponse, ErrorResponseDto, SuccessResponseDto } from "src/dto/response/auth-reponse-common.dto";
 @Injectable()
 export class ResponseService {
     success(message: string, data: any, meta?: any): SuccessResponseDto{

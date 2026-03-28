@@ -1,10 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/database/dataBase.service";
-import RegisterUserDto from "../../auth/dto/registerUser.dto"; 
-import { SafeUser, UserWithPassword } from '../../types/prisma-user'
 import { Prisma, Profile, User } from "@prisma/client";
-import { IAuthRepository } from "../../interfaces/repository/auth-repository";
-import { ProfileUserDto } from "src/dto/profile/profile.dto";
+import { ProfileUserDto } from "src/dto/request/profile/profile.dto";
 import { iProfileRepository } from "src/interfaces/repository/profile-repository";
 
 @Injectable()

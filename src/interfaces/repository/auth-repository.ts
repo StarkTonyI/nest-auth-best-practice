@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import RegisterUserDto from "src/auth/dto/registerUser.dto";
+import RegisterUserDto from "src/dto/request/auth/registerUser.dto";
 import { SafeUser, UserWithPassword } from "src/types/prisma-user";
 
 export interface IAuthRepository {
