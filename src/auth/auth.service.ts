@@ -12,6 +12,11 @@ import { ProfileRepository } from "src/infrastructure/repository/profile-reposit
 import { Response } from "express";
 import RegisterUserDto from "src/dto/request/auth/registerUser.dto";
 import LoginUserDto from "src/dto/request/auth/loginUser.dro";
+import { User } from "src/core/entities/user.entity";
+import { Password } from "src/value-objects/password.vo";
+import { Email } from "src/value-objects/email.vo";
+import { FirstName, LastName } from "src/value-objects/name.vo";
+import { uuid } from "uuidv4";
 @Injectable()
 export class AuthService {
    
@@ -29,22 +34,34 @@ export class AuthService {
 
     async register(payload: RegisterUserDto, res: Response){
         const context = { method: "register", module: "AuthService" }
-        const { email, password } = payload;
-    
-        this.authDomain.isUserCorrect(email, password);
-        await this.commandBus.execute(new CommandCreateAuthEvent(payload))
-        const user = await this.authRepo.findByEmail(email)
-        if(!user){
-            this.logger.log(`Something get wrong, user not created or exist, with email: ${email}`, context)
+
+        const email = new Email(payload.email);
+        const username = new FirstName(payload.username);
+        const lastname = new LastName(payload.lastname);
+        const password = new Password(payload.password);
+
+        const hashedPassword = bcrypt.hash(password.getValue(), 10);
+
+        
+        const user = User.create(username, lastname, hashedPassword, email, payload.role)
+
+        await this.commandBus.execute(new CommandCreateAuthEvent(user));
+
+        const findUser = await this.authRepo.findByEmail(user.userEmail.getValue())
+        
+        if(!findUser){
+            this.logger.log(`Something get wrong, user not created or exist, with email: ${user.userEmail.getValue()}`, context)
             throw new Error("User not found after creation!")
         }
-        const { access_token, refresh_token } = await this.generatedTokens(user);
+
+        const { access_token, refresh_token } = await this.generatedTokens(findUser);
+
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10);
         try {
-            await this.authRepo.update(user.id, { refreshToken: hashedRefreshToken, revoked: false })
-            this.logger.log(`Assign token succesfull for id: ${user.id}`)
+            await this.authRepo.update(findUser.userId.getValue(), { refreshToken: hashedRefreshToken, revoked: false })
+            this.logger.log(`Assign token succesfull for id: ${findUser.userId.getValue()}`)
         }catch(err){
-            this.logger.log(`Cannot assign tokens for id: ${user.id}`)
+            this.logger.log(`Cannot assign tokens for id: ${findUser.userId.getValue()}`)
             throw new Error('Cannot add token')
         }
         res.cookie('refresh_token', refresh_token, {
@@ -72,16 +89,17 @@ export class AuthService {
             if(!ismathch) throw new UnauthorizedException('Invalid email or password');
         }else throw new Error('Unexpected user type: no password');
 
-        const profile = await this.profileRepo.findByAuthId(userExist.id);
+        const profile = await this.profileRepo.findByAuthId(userExist.userId.getValue());
 
         if(!profile){
-            this.logger.log(`Profile dont exist with authId: ${userExist.id}`)
+            this.logger.log(`Profile dont exist with authId: ${userExist.userId.getValue()}`)
             throw new NotFoundException("Profile is not exist")
         }
+
         const { access_token, refresh_token } = await this.generatedTokens(userExist);
         const hashedRefreshToken = await bcrypt.hash(refresh_token, 10)
 
-        await this.authRepo.update(userExist.id, { refreshToken: hashedRefreshToken, revoked:false })
+        await this.authRepo.update(userExist.userId.getValue(), { refreshToken: hashedRefreshToken, revoked:false })
 
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,     // JS не сможет прочитать куку (защита от XSS)
@@ -91,27 +109,22 @@ export class AuthService {
   });
         
         return {
-                id: userExist.id, 
+                id: userExist.userId.getValue(), 
                 access_token,
                 refresh_token,
-                profile: {
-                profileId: profile.id,
-                profileLastname: profile.lastname,
-            }
-        }
-    }
-    
-    async generatedTokens(auth: SafeUser){
-        const payload = { id: auth.id, username: auth.username, email: auth.email }
-        return {
-            access_token: await this.jwt.signAsync(payload),
-            refresh_token: await this.jwt.signAsync(payload, {
-            expiresIn: this.config.authConfigRefresh.jwtExpirationTime, secret: this.config.authConfigRefresh.jwtSecret
-            })
+                
         }
     }
 
-    async refreshToken(user: SafeUser, refreshToken: string){
+    async generatedTokens(auth: User){
+        const payload = { id: auth, username: auth.userFirstName.getValue(), email: auth.userEmail.getValue() }
+        return {
+            access_token: await this.jwt.signAsync(payload),
+            refresh_token: uuid()
+        }
+    }
+
+    async refreshToken(user: {  }, refreshToken: string){
         const context = { module: 'AuthService', method: 'refreshToken' };
         this.logger.log("Refresh logger started..", context);
 
@@ -135,12 +148,6 @@ export class AuthService {
     }
 
 }
-
-
-
-
-
-
 
 
 

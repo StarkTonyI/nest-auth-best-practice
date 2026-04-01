@@ -37,7 +37,6 @@ export class AuthController {
     @ResponseMessage("Tokens updated succesfully")
     @Post('/refresh-token') 
     async refreshToken(@ReqUser() user, @RawToken() token: string){
-        
         return await this.authService.refreshToken(user, token)
     
     }

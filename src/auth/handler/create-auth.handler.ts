@@ -18,8 +18,9 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
     ){};
    async execute(command: CommandCreateAuthEvent): Promise<any> {
     const context = { method: 'Register user', module: "CreateCommandHandler" };
-    const { registerUser } = command;
-    const { email, password, username, lastname } = registerUser;
+    const { user } = command;
+    const email = user.userEmail.getValue();
+    const password = user.userPasswordHash;
 
     this.logger.log(`Registration user started: ${email}`, context);
 
@@ -31,10 +32,10 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
         this.logger.warning(`Registraion failed - user already exist: ${email}`, context)
         throw new ConflictException("User already exist!")  
     }
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const { id } = await this.authRepo.create({...registerUser, password: hashedPassword});
+
+    const { id } = await this.authRepo.create(user);
     
-    this.eventBus.publish(new authUserCreated(username, lastname, id ))
+    this.eventBus.publish(new authUserCreated(user.userFirstName.getValue(), user.userLastName.getValue(), id ))
 
    }
 }
