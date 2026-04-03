@@ -34,3 +34,12 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model RefreshToken {
+  id     String @id @default(cuid())
+  token String @unique
+  userId String @unique
+  revokedAt DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

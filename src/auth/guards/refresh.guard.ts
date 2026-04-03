@@ -5,8 +5,7 @@ import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
-import { AuthRepository } from "src/infrastructure/repository/auth-repository.service";
-import { SafeUser } from "src/types/prisma-user";
+import { UserRepository } from "src/infrastructure/repository/user-repository.service";
 import { REQ, TOKEN } from "../enums/auth.enum";
 import { LoggerService } from "src/services/logger.service";
 @Injectable()
@@ -14,9 +13,8 @@ export class RefreshJwtGuard implements CanActivate{
     constructor(
         private readonly jwt: JwtService,
         private readonly config: ApiConfigServices,
-        private readonly domain: AuthDomainService,
-        @Inject('IAuthRepository')
-        private readonly authRepo: AuthRepository,
+        @Inject('IUserRepository')
+        private readonly authRepo: UserRepository,
         private readonly logger: LoggerService
     ){}
 
@@ -37,14 +35,8 @@ export class RefreshJwtGuard implements CanActivate{
             }) as JwtPayload;
             
             const user = await this.authRepo.findById(payloadJwt?.id);
-            const domainResult = await this.domain.isJwtPayloadValid(payloadJwt, user);
 
-            if(!domainResult.valid) { 
-                this.logger.log(domainResult.reason, methods)
-                throw new UnauthorizedException;
-            };
-
-            req[REQ.user] = user as SafeUser;
+            req[REQ.user] = user;
             req[REQ.rawRefresh] = token;
 
             return true;

@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Post, Req, Request, Response, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get,  Post,  UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { TokenMetaData } from "./decorator/metaData/tokens.decorator";
 import { RefreshJwtGuard } from "./guards/refresh.guard";
 import { ResponseService } from "src/service/response/response.service";
 import { ResponseMessage } from "src/decorator/response-matadata.dto";
 import { RawToken } from "./decorator/rawToken.decorator";
-import { ReqUser } from "./decorator/reqUser.decorator";
 import { AccessJwtGuard } from "./guards/access.guard";
-import { TOKEN } from "./enums/auth.enum";
+import { CommandHandler } from "@nestjs/cqrs";
+import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
+import { RefreshTokenEvent } from "./handler/events/refresh-token.event";
+import { LoginEvent } from "./handler/events/login-auth.event";
 
 @Controller('auth')
 export class AuthController {
@@ -21,23 +23,20 @@ export class AuthController {
 
     @ResponseMessage("Register user success")
     @Post('/register') 
-    async register(@Body() register, @Response({passthrough: true}) res){
-        
-        return await this.authService.register(register, res)
-       
+    async register(@Body() register){
+        return await CommandHandler(new CommandCreateAuthEvent(register))
     }
 
     @ResponseMessage("Login user successfully")
     @Post('/login') 
-    async login(@Body() login, @Response({passthrough: true}) res){
-         const user = await this.authService.login(login, res)
-        return user
+    async login(@Body() login){
+        return await CommandHandler(new LoginEvent(login))
 }
     @UseGuards(RefreshJwtGuard)
     @ResponseMessage("Tokens updated succesfully")
     @Post('/refresh-token') 
-    async refreshToken(@ReqUser() user, @RawToken() token: string){
-        return await this.authService.refreshToken(user, token)
+    async refreshToken(@RawToken() token: string){
+        return await CommandHandler(new RefreshTokenEvent(token))
     
     }
 }

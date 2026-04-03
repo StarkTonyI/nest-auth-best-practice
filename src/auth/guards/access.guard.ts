@@ -5,7 +5,7 @@ import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
-import { AuthRepository } from "src/infrastructure/repository/auth-repository.service";
+import { UserRepository } from "src/infrastructure/repository/user-repository.service";
 import { SafeUser } from "src/types/prisma-user";
 import { REQ } from "../enums/auth.enum";
 import { LoggerService } from "src/services/logger.service";
@@ -16,8 +16,6 @@ export class AccessJwtGuard implements CanActivate{
         private readonly config: ApiConfigServices,
         private readonly domain: AuthDomainService,
         private readonly logger: LoggerService,
-        @Inject('IAuthRepository')
-        private readonly authRepo: AuthRepository
     ){}
 
     jwtFromRequest(req: Request){

@@ -7,6 +7,7 @@ import { ProfileService } from "./profile.service";
 import { ProfileDomainService } from "src/domains/profile.domain";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { PrismaModule } from "src/database/dataBase.module";
+import { UserRepository } from "src/infrastructure/repository/user-repository.service";
 
 const commandHandlers = [ProfileCreateHandler]
 const sagas = [RegistrationSaga]
@@ -20,7 +21,11 @@ const sagas = [RegistrationSaga]
             useClass: ProfileRepository
         }, 
         ...commandHandlers,
-        ...sagas
+        ...sagas, 
+        {
+            provide: 'IUserRepository',
+            useClass: UserRepository
+        }, 
     ],
     exports:[ProfileService, ProfileDomainService, 'IProfileRepository'],
     imports:[CqrsModule, PrismaModule]

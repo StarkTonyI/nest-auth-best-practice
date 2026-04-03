@@ -2,11 +2,11 @@ import { ConflictException, Injectable, NotFoundException, UploadedFile } from "
 import { PrismaService } from "src/database/dataBase.service";
 import { SafeUser, userSelect, userSelectWithPassword, UserWithPassword } from '../../types/prisma-user'
 import { Prisma } from "@prisma/client";
-import { IAuthRepository } from "../../interfaces/repository/auth-repository";
+import { IUserRepository } from "../../interfaces/repository/auth-repository";
 import { User } from "src/core/entities/user.entity";
 import { User as PrismaUser } from "@prisma/client";
 @Injectable()
-export class AuthRepository implements IAuthRepository{
+export class UserRepository implements IUserRepository{
     private readonly select = userSelect;
     private readonly selectWithPassword = userSelectWithPassword;
 

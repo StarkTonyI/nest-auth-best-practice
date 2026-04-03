@@ -7,12 +7,14 @@ import { ApiConfigModule } from "../configService/apiConfig.module"; // Пров
 import { AuthDomainService } from "../domains/auth.domain";
 import { CreateCommandHandler } from "./handler/create-auth.handler";
 import { CqrsModule } from "@nestjs/cqrs";
-import { AuthRepository } from "../infrastructure/repository/auth-repository.service";
+import { UserRepository } from "../infrastructure/repository/user-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { AccessJwtGuard } from "./guards/access.guard";
 import { RefreshJwtGuard } from "./guards/refresh.guard";
+import { RefreshTokenRepository } from "src/infrastructure/repository/refreshToken-repository.service";
+import { UserService } from "src/services/userServices.service";
 @Module({
     imports: [
         CqrsModule,
@@ -30,10 +32,11 @@ import { RefreshJwtGuard } from "./guards/refresh.guard";
         })
     ],
     controllers: [AuthController],
-    providers: [AuthService, AuthDomainService, CreateCommandHandler,
+    providers: [AuthService, AuthDomainService, CreateCommandHandler, UserService,
+        RefreshTokenRepository,
         {
-            provide: 'IAuthRepository',
-            useClass: AuthRepository
+            provide: 'IUserRepository',
+            useClass: UserRepository
         }, 
         {
             provide: 'IProfileRepository',
@@ -41,7 +44,7 @@ import { RefreshJwtGuard } from "./guards/refresh.guard";
         }, 
         AccessJwtGuard, 
         RefreshJwtGuard
-    ], exports: ['IAuthRepository','IProfileRepository']
+    ], exports: ['IUserRepository','IProfileRepository']
 
 })
 export class AuthModule {}
