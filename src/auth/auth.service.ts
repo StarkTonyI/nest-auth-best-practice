@@ -7,16 +7,14 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 @Injectable()
 
 export class AuthService {
-   
     constructor(
         private readonly refreshRepository: RefreshTokenRepository,
         private readonly logger: LoggerService
     ){}
-
-
     async validatoinRefreshToken(token: string): Promise<RefreshTokenEntity>{
         this.logger.log("Started token validatoin...");
-
+        console.log("token")
+        console.log(token)
         const findToken = await this.refreshRepository.findByToken(token)
         if(!findToken){
             this.logger.warn("Token is not exist in base");
@@ -32,6 +30,7 @@ export class AuthService {
             this.logger.warn("Token already expired");
             throw new UnauthorizedException;
         }
+
         
         return findToken;
 

@@ -6,6 +6,7 @@ import { User } from "src/core/entities/user.entity";
 import { uuid } from "uuidv4";
 import { AuthService } from "../auth.service";
 import { UserId } from "src/value-objects/userid.vo";
+import { RefreshTokenEntity } from "src/core/entities/refreshToken.entity";
 
 interface JwtPayload {
     userId: string,
@@ -32,17 +33,17 @@ export class TokenProvide {
         })
     }
 
-    async refreshToken(userId: UserId){
+    async refreshToken(userId: UserId):Promise<string>{
         const refreshToken = uuid();
         await this.authService.createRefreshToken(userId, refreshToken)
         return refreshToken;
     }
 
-    generatedTokens(user: User){
+    async generatedTokens(user: User){
         
         const payload = this.buildPayload(user)
         const access_token = this.accessToken(payload);
-        const refresh_token = this.refreshToken(user.userId)
+        const refresh_token = await this.refreshToken(user.userId)
         
         return {
             access_token, refresh_token

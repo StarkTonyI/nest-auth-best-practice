@@ -48,7 +48,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const redactObject = {}
       for(const [key, value] of Object.entries(req.body)){
         if(REDACT_KEYS.some(i => i.test(key))){
-            console.log('i work')
+    
             redactObject[key] = "***"
         }
         else if(typeof value === 'string' && value.length > 256) {

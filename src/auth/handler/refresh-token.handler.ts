@@ -1,15 +1,15 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { RefreshTokenEvent } from "./events/refresh-token.event";
-import { Inject, UnauthorizedException } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoggerService } from "src/services/logger.service";
 import { AuthService } from "../auth.service";
 import { UserRepository } from "src/infrastructure/repository/user-repository.service";
 import { JwtService } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { uuid } from "uuidv4";
-
+@Injectable()
 @CommandHandler(RefreshTokenEvent)
-export class RefreshTokenHandler implements ICommandHandler<RefreshTokenEvent>{
+export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenEvent>{
     constructor(
         private readonly logger: LoggerService, 
         private readonly authService: AuthService, 

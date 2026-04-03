@@ -13,8 +13,6 @@ import { UserService } from "src/services/userServices.service";
 
 export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEvent> {
     constructor(
-        @Inject('IUserRepository')
-        private readonly authRepo: IUserRepository,
         private readonly eventBus: EventBus,
         private readonly logger: LoggerService,
         private readonly userService: UserService

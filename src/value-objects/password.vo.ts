@@ -15,7 +15,7 @@ export class Password {
     return passwordRegex.test(password);
   }
 
-  getValue(): string{
+  get getValue(): string{
     return this.password;
   }
 

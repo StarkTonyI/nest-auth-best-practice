@@ -15,6 +15,10 @@ import { AccessJwtGuard } from "./guards/access.guard";
 import { RefreshJwtGuard } from "./guards/refresh.guard";
 import { RefreshTokenRepository } from "src/infrastructure/repository/refreshToken-repository.service";
 import { UserService } from "src/services/userServices.service";
+import { LoginCommandHandler } from "./handler/login-auth.handler";
+import { RefreshTokenCommandHandler } from "./handler/refresh-token.handler";
+import { ProfileService } from "src/profile/profile.service";
+import { TokenProvide } from "./providers/token.provide";
 @Module({
     imports: [
         CqrsModule,
@@ -32,8 +36,10 @@ import { UserService } from "src/services/userServices.service";
         })
     ],
     controllers: [AuthController],
-    providers: [AuthService, AuthDomainService, CreateCommandHandler, UserService,
-        RefreshTokenRepository,
+    providers: [
+        AuthService, AuthDomainService, CreateCommandHandler, 
+        LoginCommandHandler, RefreshTokenCommandHandler,
+        UserService, RefreshTokenRepository, ProfileService, TokenProvide,
         {
             provide: 'IUserRepository',
             useClass: UserRepository

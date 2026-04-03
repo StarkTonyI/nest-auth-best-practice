@@ -1,11 +1,10 @@
-import { Inject, UnauthorizedException } from "@nestjs/common";
-import { privateDecrypt } from "crypto";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { UserId } from "src/value-objects/userid.vo";
-
+@Injectable()
 export class ProfileService {
     constructor(
-        @Inject("IUserRepository")
+        @Inject("IProfileRepository")
         private readonly profileRepository: ProfileRepository
     ){}
 

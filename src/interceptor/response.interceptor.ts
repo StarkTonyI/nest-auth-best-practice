@@ -8,10 +8,20 @@ export class ResponseInterceptor implements NestInterceptor {
     constructor(private readonly response: ResponseService, private readonly reflector: Reflector){}
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
-    
+        const response = context.switchToHttp().getResponse()
         return next.handle()
         .pipe(map((data)=> {
             const reflector = this.reflector.get(RESPONSE_MESSAGE, context.getHandler())
+            if('refresh_token' in data && request.path.includes("login") || request.path.includes("refresh-token")){
+                console.log(data.refresh_token)
+                response.cookie('refreshToken', data.refresh_token, {
+                    httpOnly: true,    // Защита от XSS (JS не достанет)
+                    secure: true,      // Только по HTTPS
+                    sameSite: 'strict', // Защита от CSRF
+                    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней в мс
+          });
+            return this.response.success(reflector, { ...data, refresh_token:"***" })
+            }
             return this.response.success(reflector, data ?? null, request)
         }))
     }

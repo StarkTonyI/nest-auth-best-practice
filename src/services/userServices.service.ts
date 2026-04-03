@@ -24,7 +24,8 @@ export class UserService {
             throw new Error("User already exist")
         }
 
-        const passwordHash = bcrypt.hash(password.getValue, 10)
+        const passwordHash = await bcrypt.hash(password.getValue, 10)
+      
 
         const validatedUser = User.create(userName, lastName,passwordHash, email, user.role)
 
@@ -43,7 +44,7 @@ export class UserService {
             throw new Error("User is not exist!")
         }
 
-        const passwordEqual = this.comparePassword(password.getValue(), findUser.userPasswordHash)
+        const passwordEqual = this.comparePassword(password.getValue, findUser.userPasswordHash)
         if(!passwordEqual){
             throw new UnauthorizedException;
         }

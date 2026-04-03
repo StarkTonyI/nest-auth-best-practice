@@ -4,10 +4,15 @@ import { LoggerService } from "src/services/logger.service";
 import { UserService } from "src/services/userServices.service";
 import { ProfileService } from "src/profile/profile.service";
 import { TokenProvide } from "../providers/token.provide";
-
+import { Injectable } from "@nestjs/common";
+@Injectable()
 @CommandHandler(LoginEvent)
-export class LoginHandler implements ICommandHandler<LoginEvent>{
-    constructor(private readonly logger: LoggerService, private readonly userService: UserService, private readonly profileService: ProfileService, 
+export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
+    constructor(
+        private readonly logger: LoggerService, 
+        private readonly userService: UserService,
+        private readonly profileService: ProfileService, 
+    
     private readonly tokenProvider: TokenProvide){};
     async execute(command: LoginEvent) {
         const { login } = command;
@@ -19,10 +24,10 @@ export class LoginHandler implements ICommandHandler<LoginEvent>{
         
         await this.profileService.validateProfile(userValidate.userId)
     
-        const { access_token, refresh_token } = this.tokenProvider.generatedTokens(userValidate)
+        const { access_token, refresh_token } = await this.tokenProvider.generatedTokens(userValidate)
         
         this.logger.log("Login ended!");
-        
+   
         return {
             id: userValidate.userId.getValue(), 
             access_token,

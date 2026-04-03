@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { ProfileController } from "./profile.controller";
 import { CqrsModule } from "@nestjs/cqrs";
 import { ProfileCreateHandler } from "./handler/createProfile.handler";
 import { RegistrationSaga } from "src/sagas/registration.saga";
@@ -25,10 +24,10 @@ const sagas = [RegistrationSaga]
         {
             provide: 'IUserRepository',
             useClass: UserRepository
-        }, 
+        },
     ],
     exports:[ProfileService, ProfileDomainService, 'IProfileRepository'],
-    imports:[CqrsModule, PrismaModule]
+    imports:[CqrsModule, PrismaModule, ProfileModule]
 })
 export class ProfileModule {};
 
