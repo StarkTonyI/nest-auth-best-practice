@@ -58,8 +58,11 @@ export class Identity {
         return this.profile
     }
 
-    addProfile(profile: Profile){
-        this.profile = profile;
+    createNewSession(hashedToken: string, expirationDays: number){
+        const identityId = this.userId;
+        const session = new Session({ hashedToken, identityId, expirationDays })
+        this.session = session;
+        return session;
     }
 
     static create(email: Email, passwordHash: string){

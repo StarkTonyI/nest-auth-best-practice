@@ -21,7 +21,7 @@ export class Session {
 
     constructor(props: SessionProps){
         const now = new Date();
-
+        props.expirationDays = Number(props.expirationDays)
         this.id = props.id || uuid();
         this.hashedToken = props.hashedToken;
         this.identityId = props.identityId;

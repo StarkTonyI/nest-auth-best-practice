@@ -28,7 +28,7 @@ export class SessionRepository {
         return this.refreshTokenMapper(token)
     }
 
-    async update(token: PrismaSession): Promise<Session>{
+    async updateSession(token: PrismaSession): Promise<Session>{
         const updatedToken = await this.prisma.session.update({
             where:{ id: token.id },
             data:{
@@ -38,7 +38,7 @@ export class SessionRepository {
         return Session.formDate(updatedToken)
     }
 
-    async deleteRefreshTokenByUserId(userId: string){
+    async deleteSessionById(userId: string){
         await this.prisma.session.deleteMany({
             where:{
                 identityId: userId
@@ -46,7 +46,7 @@ export class SessionRepository {
         })
     }
 
-    async createRefreshToken(session: Session):Promise<Session>{
+    async createSession(session: Session):Promise<Session>{
         const refreshTokenCreated = await this.prisma.session.create({
             data:{
                 id: session.id,
