@@ -1,24 +1,22 @@
 import { Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { AuthController } from "./identity.controller";
+import { IdentityService } from "./identity.service";
 import { PrismaModule } from "../database/dataBase.module";
 import { ConfigModule } from "@nestjs/config";
 import { ApiConfigModule } from "../configService/apiConfig.module"; // Проверь путь
 import { AuthDomainService } from "../domains/auth.domain";
-import { CreateCommandHandler } from "./handler/create-auth.handler";
+import { CreateCommandHandler } from "./handler/create-identity.handler";
 import { CqrsModule } from "@nestjs/cqrs";
-import { UserRepository } from "../infrastructure/repository/user-repository.service";
+import { UserRepository } from "../infrastructure/repository/identity-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { AccessJwtGuard } from "./guards/access.guard";
 import { RefreshJwtGuard } from "./guards/refresh.guard";
-import { RefreshTokenRepository } from "src/infrastructure/repository/refreshToken-repository.service";
-import { UserService } from "src/services/userServices.service";
+import { RefreshTokenRepository } from "src/infrastructure/repository/session-repository.service";
 import { LoginCommandHandler } from "./handler/login-auth.handler";
-import { RefreshTokenCommandHandler } from "./handler/refresh-token.handler";
+import { RefreshTokenCommandHandler } from "./handler/session.handler";
 import { ProfileService } from "src/profile/profile.service";
-import { TokenProvide } from "./providers/token.provide";
 @Module({
     imports: [
         CqrsModule,
@@ -37,9 +35,9 @@ import { TokenProvide } from "./providers/token.provide";
     ],
     controllers: [AuthController],
     providers: [
-        AuthService, AuthDomainService, CreateCommandHandler, 
+        AuthDomainService, CreateCommandHandler, 
         LoginCommandHandler, RefreshTokenCommandHandler,
-        UserService, RefreshTokenRepository, ProfileService, TokenProvide,
+        IdentityService, RefreshTokenRepository, ProfileService,
         {
             provide: 'IUserRepository',
             useClass: UserRepository

@@ -1,35 +1,30 @@
 import { CommandHandler, EventBus, ICommandHandler } from "@nestjs/cqrs";
-import { CreateProfileHandlerEvent } from "./events/createProfile.events";
 import { ProfileDomainService } from "src/domains/profile.domain";
 import { Inject } from "@nestjs/common";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { DeleteProfileEvent } from "./events/deleteProfile.event"
 import { LoggerService } from "src/services/logger.service";
+import { CreateProfileHandler } from "./events/createProfile.events";
 
-@CommandHandler(CreateProfileHandlerEvent)
-export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandlerEvent>{
+@CommandHandler(CreateProfileHandler)
+export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandler>{
     constructor(private readonly domain: ProfileDomainService,
         @Inject('IProfileRepository')
-        private readonly profile: iProfileRepository,
+        private readonly profileRepository: iProfileRepository,
         private readonly eventBus: EventBus,
         private readonly logger: LoggerService
     ){}
-    async execute(command: CreateProfileHandlerEvent): Promise<any> {
+    async execute(command: CreateProfileHandler): Promise<any> {
         const context = { method: "ProfileCreateHandler", module: "execute" }
-        const { username, lastname, authId } = command;
-
+        const { userName, firstName, lastName, authId } = command;
         this.logger.log(`Creation profile with authId - ${authId} started...`, context)
-
-        const validatedProfile = this.domain.createProfileEntity({username, lastname, authId})
-
         let profile:any;
-
         try {
-            profile = await this.profile.create(validatedProfile)
+            profile = await this.profileRepository.create({ userName, firstName, lastName, authId })
             this.logger.log(`Profile successfully created with id - ${profile.id}`)
         }catch(err){
             this.logger.warn(`Profile creation failed, with user - ${authId} cause: ${err.message}`)
-            await this.eventBus.publish(new DeleteProfileEvent(authId, err))
+            await this.eventBus.publish(new DeleteProfileEvent(authId, err.message))
         }
 
         return Promise.resolve()

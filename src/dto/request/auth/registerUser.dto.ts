@@ -1,17 +1,14 @@
-import { Role } from "@prisma/client";
 import { IsBoolean, IsEmail, IsEnum, IsString, MaxLength, MinLength } from "class-validator";
 export default class RegisterUserDto {
     @IsString()
-    username: string;
+    userName!: string;
     @IsEmail()
-    email: string;
-    @IsEnum(Role)
-    role: Role;
+    email!: string;
     @MinLength(8)
     @MaxLength(24)
-    password: string;
-    @IsBoolean()
-    revoked: boolean;
+    password!: string;
     @IsString()
-    lastname: string;
+    firstName!: string;
+    @IsString()
+    lastName!: string;
 }

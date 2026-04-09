@@ -1,16 +1,16 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { DeleteProfileAndUserEvent } from "./events/delete-auth.events";
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { type IUserRepository } from "src/interfaces/repository/auth-repository";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { LoggerService } from "../../services/logger.service";
+import { type IdentityRepository } from "src/interfaces/repository/identity-repository";
 
 @Injectable()
 @CommandHandler(DeleteProfileAndUserEvent)
 export class DeleteAuthHandler implements ICommandHandler<DeleteProfileAndUserEvent>{
     constructor(
-        @Inject('IUserRepository')
-        private readonly authRepo: IUserRepository,
+        @Inject('IdentityRepository')
+        private readonly authRepo: IdentityRepository,
         @Inject('IProfileRepository')
         private readonly profileRepo: iProfileRepository,
         private readonly logger: LoggerService
@@ -24,14 +24,14 @@ export class DeleteAuthHandler implements ICommandHandler<DeleteProfileAndUserEv
 
         if(!authId) throw new Error('Incorrect data');
 
-        const userExist = this.authRepo.findById(authId)
+        const userExist = this.authRepo.findById(authId.getValue(), {})
         if(!userExist){
             this.logger.warn(`Cant delete user, user dont exist - ${authId}`, context);
             throw new NotFoundException('User dont exist!')
         }
         try {
-            await this.authRepo.delete(authId);
-            await this.profileRepo.delete(authId)
+            await this.authRepo.delete(authId.getValue());
+            await this.profileRepo.delete(authId.getValue())
 
             this.logger.logger(
             `Profile with such authId: ${authId} deleted successfully. Dispatching event.`,

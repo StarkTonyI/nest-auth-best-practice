@@ -3,10 +3,10 @@ import { IsEmail, IsEnum, IsString, MinLength } from "class-validator";
 
 export default class LoginUserDto {
     @IsEmail()
-    email: string;
+    email!: string;
     @IsString()
     @MinLength(2)
-    password: string;
+    password!: string;
     @IsEnum(Role)
-    role: string;
+    role!: string;
 }

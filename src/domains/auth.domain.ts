@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { JwtPayload } from "../interfaces/jwtPayload.interface";
 import { JwtValidationResult } from "../interfaces/auth-domain.interface";
-import { type IUserRepository } from "../interfaces/repository/auth-repository";
+import { type IUserRepository } from "../interfaces/repository/identity-repository";
 import { SafeUser } from "src/types/prisma-user";
 @Injectable()
 export class AuthDomainService {

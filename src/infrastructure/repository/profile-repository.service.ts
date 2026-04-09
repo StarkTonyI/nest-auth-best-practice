@@ -1,18 +1,22 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/database/dataBase.service";
-import { Prisma, Profile, User } from "@prisma/client";
-import { ProfileUserDto } from "src/dto/request/profile/profile.dto";
+import { Prisma, Profile } from "@prisma/client";
 import { iProfileRepository } from "src/interfaces/repository/profile-repository";
+import { createProfilePayload } from "src/dto/request/profile/profile.dto";
 
 @Injectable()
 export class ProfileRepository implements iProfileRepository{
     constructor(private readonly prisma: PrismaService){};
 
-    async create(profile: ProfileUserDto): Promise<Profile>{
-        const { username, authId, lastname } = profile;
+    async create(profile: createProfilePayload): Promise<Profile>{
+        const { userName, firstName, lastName, authId } = profile;
 
         try{
-            return await this.prisma.profile.create({data: { username, lastname, authId } })
+            return await this.prisma.profile.create({data: { 
+                userName: userName.getValue(), lastName: lastName.getValue(), 
+                firstName: firstName.getValue(), identityId: authId.getValue(), 
+                bio: '', avatarUrl: ''
+            } })
         } catch (e) {
                 if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 // P2002 — это код Prisma для Unique constraint failed
@@ -22,9 +26,8 @@ export class ProfileRepository implements iProfileRepository{
             }
                 throw e; 
         }
-
-
     }
+
     async findById(id: string): Promise<Profile | null> {
     return await this.prisma.profile.findUnique({
         where: { id }
@@ -33,11 +36,11 @@ export class ProfileRepository implements iProfileRepository{
     async findByAuthId(authId: string): Promise<Profile | null>{
         return await this.prisma.profile.findUnique(({
             where:{
-                authId
+                identityId: authId
             }
         }))
     }
-    async update(id: string, update: Partial<ProfileUserDto>): Promise<Profile>{
+    async update(id: string, update: Partial<Profile>): Promise<Profile>{
         
     try {
         return await this.prisma.profile.update({
@@ -61,7 +64,7 @@ export class ProfileRepository implements iProfileRepository{
         try{
         return await this.prisma.profile.delete({
             where:{
-                authId
+                identityId: authId
             }
         })
         }catch(err){

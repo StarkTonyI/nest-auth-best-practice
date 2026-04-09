@@ -6,7 +6,7 @@ import { ProfileService } from "./profile.service";
 import { ProfileDomainService } from "src/domains/profile.domain";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { PrismaModule } from "src/database/dataBase.module";
-import { UserRepository } from "src/infrastructure/repository/user-repository.service";
+import { UserRepository } from "src/infrastructure/repository/identity-repository.service";
 
 const commandHandlers = [ProfileCreateHandler]
 const sagas = [RegistrationSaga]

@@ -1,8 +1,12 @@
-export class CreateProfileHandlerEvent {
+import { FirstName, LastName, UserName } from "src/value-objects/name.vo";
+import { UserId } from "src/value-objects/userid.vo";
+
+export class CreateProfileHandler  {
     constructor(
-        public username: string,
-        public lastname:string,
-        public authId: string,
+        public userName: UserName,
+        public firstName: FirstName,
+        public lastName:LastName,
+        public authId: UserId,
     ){}
 }
 

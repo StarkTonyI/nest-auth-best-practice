@@ -5,7 +5,7 @@ import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
-import { UserRepository } from "src/infrastructure/repository/user-repository.service";
+import { UserRepository } from "src/infrastructure/repository/identity-repository.service";
 import { SafeUser } from "src/types/prisma-user";
 import { REQ } from "../enums/auth.enum";
 import { LoggerService } from "src/services/logger.service";

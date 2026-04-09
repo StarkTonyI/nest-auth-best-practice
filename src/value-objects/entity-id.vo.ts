@@ -1,6 +1,5 @@
 import { uuid } from "uuidv4";
 
-
 export abstract class EntityId {
     private readonly value: string
     constructor(value:string){

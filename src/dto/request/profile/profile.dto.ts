@@ -1,12 +1,10 @@
-import { IsEmail, isString, IsString, MinLength } from "class-validator";
 
-export class ProfileUserDto {
-    @IsString()
-    @MinLength(6)
-    username: string;
-    @IsString()
-    authId: string;
-    @IsString()
-    lastname: string
-    
+import { FirstName, LastName, UserName } from "src/value-objects/name.vo";
+import { UserId } from "src/value-objects/userid.vo";
+
+export interface createProfilePayload {
+    userName: UserName,
+    firstName: FirstName,
+    lastName: LastName,
+    authId: UserId
 }

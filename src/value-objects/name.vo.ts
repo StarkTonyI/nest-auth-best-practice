@@ -1,3 +1,5 @@
+import { uuid } from "uuidv4";
+
 export class Name {
     private readonly value: string
     constructor(value: string){
@@ -22,6 +24,18 @@ export class Name {
     equals(value: string): boolean{
         return value.trim() === this.getValue()
     }
+
+ 
+}
+
+export class UserName extends Name {
+    constructor(){
+        super(UserName.createUniqUserName())
+    }
+
+    static createUniqUserName(){
+        return `user-${uuid()}`
+    }
 }
 
 export class FirstName extends Name {
@@ -34,6 +48,7 @@ export class LastName extends Name {
     constructor(lastName: string){
         super(lastName)
     }
+
 }
 
 export class FullName {

@@ -1,45 +1,56 @@
-
-
 generator client {
   provider = "prisma-client-js" // <-- Добавь "-js" сюда
 }
-
 datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  user 
-  admin
+model Identity {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  
+  // Твои новые бро:
+  createdAt    DateTime  @default(now())   // Ставится один раз при создании
+  updatedAt    DateTime  @updatedAt       // Prisma сама обновляет при любом изменении
+  
+  profile      Profile?
+  sessions     Session[]
+  
+  @@map("identities")
 }
-
-model User {
-  id     String @id @default(cuid())
-  email String  @unique
-  username  String
-  lastname String @default("N/A")
-  password String 
-  role Role @default(user)
-  refreshToken String
-  revoked Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// --- Модуль Users (Profile & Personal Data) ---
 
 model Profile {
-  id     String @id @default(cuid())
-  authId String @unique
-  username  String
-  lastname String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  userName    String   @unique
+  firstName   String?
+  lastName    String?
+  avatarUrl   String?
+  bio         String?  @db.Text
+
+  // Внешний ключ на Identity
+  identityId  String   @unique
+  identity    Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("profiles")
+}
+// --- Модуль Refresh/Session (Token Management) ---
+
+model Session {
+  id           String   @id @default(uuid())
+  hashedToken  String   @unique // Refresh Token (храним хеш для безопасности)
+  
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  // Связь с Identity
+  identityId   String @unique
+  identity     Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
-model RefreshToken {
-  id     String @id @default(cuid())
-  token String @unique
-  userId String @unique
-  revokedAt DateTime?
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}

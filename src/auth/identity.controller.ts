@@ -8,6 +8,10 @@ import { CommandBus } from "@nestjs/cqrs";
 import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
 import { RefreshTokenEvent } from "./handler/events/refresh-token.event";
 import { LoginEvent } from "./handler/events/login-auth.event";
+import { ReqUser } from "./decorator/reqUser.decorator";
+import { ChangePasswordDto } from "src/dto/request/auth/changePassword.dto";
+import { ResponseInterceptor } from "src/interceptor/response.interceptor";
+import { ChangePasswordCommand } from "./handler/events/change-passwrod.event";
 
 @Controller('auth')
 export class AuthController {
@@ -30,6 +34,16 @@ export class AuthController {
     async login(@Body() login){
         return this.commandBus.execute(new LoginEvent(login))
 }
+
+    
+    @ResponseMessage("Password reset successfully")
+    @Post("/change-password")
+    async changePassword(@Body() passwordPayload: ChangePasswordDto, @ReqUser("id") id){
+        return this.commandBus.execute(new ChangePasswordCommand(id, passwordPayload.newPassword, passwordPayload.oldPassword))
+    }
+
+
+    @ResponseMessage("Refresh token successfully")
     @UseGuards(RefreshJwtGuard)
     @ResponseMessage("Tokens updated succesfully")
     @Post('/refresh-token') 

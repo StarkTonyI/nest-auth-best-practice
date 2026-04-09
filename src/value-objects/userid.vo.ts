@@ -6,10 +6,10 @@ export class UserId extends EntityId{
     }
 
     static create(value?: string): UserId{
-        return new UserId(value || EntityId.generatedId())
+        return new UserId(value || UserId.generatedId())
     }
 
-    static fromString(value: string): UserId{
+    static fromString(value: string): EntityId{
         return new UserId(value)
     }
 }

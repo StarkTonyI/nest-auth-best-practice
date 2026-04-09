@@ -2,8 +2,8 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { RefreshTokenEvent } from "./events/refresh-token.event";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoggerService } from "src/services/logger.service";
-import { AuthService } from "../auth.service";
-import { UserRepository } from "src/infrastructure/repository/user-repository.service";
+import { IdentityService } from "../identity.service";
+import { UserRepository } from "src/infrastructure/repository/identity-repository.service";
 import { JwtService } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { uuid } from "uuidv4";
@@ -12,7 +12,7 @@ import { uuid } from "uuidv4";
 export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenEvent>{
     constructor(
         private readonly logger: LoggerService, 
-        private readonly authService: AuthService, 
+        private readonly identityService: IdentityService, 
         @Inject("IUserRepository")
         private readonly authRepository: UserRepository, 
         private readonly jwt: JwtService,
@@ -23,7 +23,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
         const { refreshToken } = command;
         this.logger.log("Started refresh token", context)
 
-        const token = await this.authService.validatoinRefreshToken(refreshToken)
+        const token = await this.identityService.validatoinRefreshToken(refreshToken)
 
         if(!token){
             throw new UnauthorizedException;
@@ -35,7 +35,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
             throw new UnauthorizedException;
         }
 
-        await this.authService.revokeRefreshToken(refreshToken)
+        await this.identityService.revokeRefreshToken(refreshToken)
 
         const payload = {
             userId: user.userId.getValue(),
@@ -50,7 +50,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
 
          const refresh_token = uuid();
 
-         await this.authService.createRefreshToken(user.userId, refreshToken)
+         await this.identityService.createRefreshToken(user.userId, refreshToken)
 
         return { access_token, refresh_token };
     }

@@ -1,21 +1,21 @@
 import { ICommand, ofType, Saga } from "@nestjs/cqrs";
 import { map, Observable } from "rxjs";
-import { authUserCreated } from "src/auth/events/auth-user-created.event";
 import { DeleteProfileAndUserEvent } from "src/auth/handler/events/delete-auth.events";
 import { LoggerService } from "src/services/logger.service";
-import { CreateProfileHandlerEvent } from "src/profile/handler/events/createProfile.events";
+import { CreateProfileHandler } from "src/profile/handler/events/createProfile.events";
 import { DeleteProfileEvent } from "src/profile/handler/events/deleteProfile.event";
 import { Injectable } from "@nestjs/common";
+import { authUserCreatedEvent } from "src/auth/events/auth-user-created.event";
 @Injectable()
 export class RegistrationSaga {
     constructor(private readonly logger: LoggerService){}
 @Saga()
 userCreated = (events$:Observable<any>): Observable<ICommand> => {
     return events$.pipe(
-        ofType(authUserCreated),
+        ofType(authUserCreatedEvent),
         map((event) => {
             this.logger.log(`Started create profile with authId: ${event.authId}`)
-            return new CreateProfileHandlerEvent(event.username, event.lastname, event.authId)
+            return new CreateProfileHandler(event.userName, event.lastName, event.firstName, event.authId)
         })
     )
 }

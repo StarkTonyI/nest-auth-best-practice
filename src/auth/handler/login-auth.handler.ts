@@ -1,30 +1,32 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { LoginEvent } from "./events/login-auth.event";
 import { LoggerService } from "src/services/logger.service";
-import { UserService } from "src/services/userServices.service";
-import { ProfileService } from "src/profile/profile.service";
-import { TokenProvide } from "../providers/token.provide";
 import { Injectable } from "@nestjs/common";
+import { Email } from "src/value-objects/email.vo";
+import { Password } from "src/value-objects/password.vo";
+import { SessionService } from "../sessions/session.service";
 @Injectable()
 @CommandHandler(LoginEvent)
 export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
     constructor(
         private readonly logger: LoggerService, 
-        private readonly userService: UserService,
-        private readonly profileService: ProfileService, 
-    
-    private readonly tokenProvider: TokenProvide){};
+        private readonly sessoin: SessionService
+    ){};
     async execute(command: LoginEvent) {
         const { login } = command;
         const { email, password } = login;
         
         this.logger.log("Started login.. ")
 
-        const userValidate = await this.userService.validateUser(email, password)
+        const emailValidated = new Email(email);
+        const passwordValidated = new Password(password);
+
         
-        await this.profileService.validateProfile(userValidate.userId)
-    
-        const { access_token, refresh_token } = await this.tokenProvider.generatedTokens(userValidate)
+        
+
+
+
+        const { access_token, refresh_token } = await this.sessoin.generatedTokens(userValidate)
         
         this.logger.log("Login ended!");
    
