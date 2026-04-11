@@ -8,6 +8,7 @@ import { TokenService } from "../services/TokenService.service";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
 import { HasherService } from "../services/HasherService.service";
 import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
+import { AuthenticationException, EntityNotFoundException } from "src/exeption/domain-exeptions";
 
 @Injectable()
 @CommandHandler(LoginEvent)
@@ -29,18 +30,18 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
             const password = new Password(login.password);
 
             this.logger.log("Validating user credentials");
-            const findUser = await this.identityRepository.findByEmail(email.getValue(), { passwordHash: true });
+            const findUser = await this.identityRepository.findByEmail(email.getValue, { passwordHash: true });
             
             if (!findUser) {
                 this.logger.warn("User not found for email: " + login.email);
-                throw new Error("User does not exist");
+                throw new EntityNotFoundException("User", { reason: "User is not exist in base", entityId: "", entity: email.getValue});
             }
             this.logger.log("Comparing passwords for user: " + findUser.userId);
             const passwordCompare = await this.passwordHash.compare(password.getValue, findUser.userPasswordHash);
             
             if (!passwordCompare) {
                 this.logger.warn("Invalid password attempt for user: " + findUser.userId);
-                throw new Error("Incorrect login or password");
+                throw new AuthenticationException("Incorrect password");
             }
 
             this.logger.log("Generating tokens for user: " + findUser.userId);

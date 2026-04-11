@@ -14,7 +14,7 @@ export class Email {
     return emailRegex.test(email);
   }
 
-  getValue():string {
+  get getValue():string {
     return this.email;
   }
   equals(value: string): boolean{

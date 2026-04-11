@@ -10,13 +10,10 @@ export class ResponseInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
 
-        console.log(request.path)
         return next.handle()
         .pipe(map((data)=> {
             const reflector = this.reflector.get(RESPONSE_MESSAGE, context.getHandler())
             if('refresh_token' in data && (request.path.includes("login") || request.path.includes("refresh-token"))){
-                console.log("Start coooking")
-                console.log(data.refresh_token)
                 response.cookie('refreshToken', data.refresh_token, {
                     httpOnly: true,    // Защита от XSS (JS не достанет)
                     secure: true,      // Только по HTTPS
@@ -29,4 +26,5 @@ export class ResponseInterceptor implements NestInterceptor {
         }))
     }
 }
-//64d7ae5c-753a-449e-a502-28b90e071f80
+
+

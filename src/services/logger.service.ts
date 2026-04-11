@@ -17,7 +17,7 @@ export class LoggerService extends Logger {
             timeStamp: new Date().toISOString()
         }
         const data = { standtart, ...context }
-        return super.log(data)
+        return this.log(data)
     }
 
     err(message: any, context?: Context){
@@ -28,7 +28,7 @@ export class LoggerService extends Logger {
             timeStamp: new Date().toISOString()
         }
         const data = { standtart, ...context }
-        return super.error(data)
+        return this.error(data)
 }
 
     warning(message: unknown, context?: Context): void {
@@ -39,7 +39,7 @@ export class LoggerService extends Logger {
             timeStamp: new Date().toISOString()
         }
         const data = { standtart, ...context }
-        return super.warn(data)
+        return this.warn(data)
     }
 
 }

@@ -14,7 +14,7 @@ export class IdentityRepository implements iIdentityRepository{
         try {
             const userCreated = await this.prisma.identity.create({
                 data: { 
-                    email: identity.userEmail.getValue(),
+                    email: identity.userEmail.getValue,
                     passwordHash: identity.userPasswordHash, 
                 },  select: this.select
                 })

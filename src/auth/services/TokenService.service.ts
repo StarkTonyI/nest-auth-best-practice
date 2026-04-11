@@ -13,7 +13,7 @@ export class TokenService {
     buildPayload(userId: UserId, email: Email){
         const payload = {
             userId: userId.getValue,
-            email: email.getValue(),
+            email: email.getValue,
         }
         return payload
     }

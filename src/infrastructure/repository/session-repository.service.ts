@@ -47,7 +47,6 @@ export class SessionRepository implements iSessionRepository{
     }
 
     async createSession(session: Session):Promise<Session>{
-        console.log(session)
         const refreshTokenCreated = await this.prisma.session.create({
             data:{
                 id: session.id,

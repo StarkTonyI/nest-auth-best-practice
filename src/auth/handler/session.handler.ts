@@ -31,9 +31,6 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
         const hashedCookieToken = await this.hasherService.hashToken(refreshToken)
         const session = await this.sessoinRepository.findByToken(hashedCookieToken);
 
-        console.log(refreshToken)
-        console.log(hashedCookieToken)
-
         if (!session) {
             this.logger.error("Session not found for refresh token", context);
             throw new UnauthorizedException("Invalid refresh token");
@@ -57,16 +54,10 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
 
         await this.sessoinRepository.deleteSessionById(session.getIdentityId)
         await this.sessoinRepository.createSession(sessoinEntity);
-        
-        console.log(hashedToken)
+    
 
         this.logger.log("Session saved successfully", context);
         return { access_token, refresh_token };
     }
 }
 
-//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
-//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
-//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
-//7f76fb4c1366ddfe257e92ffb2b6eeb5974c448f40fdae7d5fb8a728c33bc5ad
-//29d669eeacb9f3469922a3b3584aef9c9cbbf2144bf0153cfbdba7076b07b078

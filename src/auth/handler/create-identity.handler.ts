@@ -36,7 +36,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
 
     this.logger.log(`Registration user started: ${user.email}`, context);
 
-    const findUser = await this.identityRepository.findByEmail(email.getValue(), {});
+    const findUser = await this.identityRepository.findByEmail(email.getValue, {});
     if (findUser) {
         this.logger.warn(`User already exists: ${user.email}`, context);
         throw new ConflictException("User already exist");

@@ -16,6 +16,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { RequestIdMiddleware } from './middleware/request-id.middleware';
 import { ProfileController } from './profile/profile.controller';
 import { AuthController } from './auth/identity.controller';
+import { DomainExceptionFilter } from './filters/domain-exeption';
 
 @Global()
 @Module({
@@ -33,6 +34,10 @@ import { AuthController } from './auth/identity.controller';
     {
       provide: APP_FILTER,
       useClass: ApiExeptionFilter
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionFilter
     }
   ],
   exports: [LoggerService]

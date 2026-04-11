@@ -5,11 +5,12 @@ export class UserId extends EntityId{
         super(id)
     }
 
-    static create(value?: string): UserId{
+     static create(value?:string): UserId{
         return new UserId(value || UserId.generatedId())
     }
 
     static fromString(value: string): EntityId{
         return new UserId(value)
     }
+    
 }
