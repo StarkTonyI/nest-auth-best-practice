@@ -1,4 +1,4 @@
-import { uuid } from "uuidv4";
+import { randomBytes } from "crypto";
 
 export class Name {
     private readonly value: string
@@ -24,17 +24,14 @@ export class Name {
     equals(value: string): boolean{
         return value.trim() === this.getValue()
     }
-
- 
 }
 
 export class UserName extends Name {
-    constructor(){
-        super(UserName.createUniqUserName())
+    constructor(userName?: string){
+        super(userName || UserName.createUniqUserName(18))
     }
-
-    static createUniqUserName(){
-        return `user-${uuid()}`
+    static createUniqUserName(length: number){
+        return `user-${randomBytes(length).toString('hex').slice(0, length)}`
     }
 }
 

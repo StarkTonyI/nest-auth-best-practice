@@ -1,13 +1,7 @@
-import { FirstName, LastName, UserName } from "src/value-objects/name.vo";
-import { UserId } from "src/value-objects/userid.vo";
+import { Profile } from "src/core/entities/profile.entity";
 
 export class CreateProfileHandler  {
-    constructor(
-        public userName: UserName,
-        public firstName: FirstName,
-        public lastName:LastName,
-        public authId: UserId,
-    ){}
+    constructor(public readonly profile: Profile){}
 }
 
 

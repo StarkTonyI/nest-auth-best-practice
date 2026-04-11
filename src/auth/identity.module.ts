@@ -1,22 +1,21 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./identity.controller";
-import { IdentityService } from "./identity.service";
 import { PrismaModule } from "../database/dataBase.module";
 import { ConfigModule } from "@nestjs/config";
 import { ApiConfigModule } from "../configService/apiConfig.module"; // Проверь путь
-import { AuthDomainService } from "../domains/auth.domain";
 import { CreateCommandHandler } from "./handler/create-identity.handler";
 import { CqrsModule } from "@nestjs/cqrs";
-import { UserRepository } from "../infrastructure/repository/identity-repository.service";
+import { IdentityRepository } from "../infrastructure/repository/identity-repository.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { ProfileRepository } from "src/infrastructure/repository/profile-repository.service";
 import { AccessJwtGuard } from "./guards/access.guard";
 import { RefreshJwtGuard } from "./guards/refresh.guard";
-import { RefreshTokenRepository } from "src/infrastructure/repository/session-repository.service";
 import { LoginCommandHandler } from "./handler/login-auth.handler";
 import { RefreshTokenCommandHandler } from "./handler/session.handler";
-import { ProfileService } from "src/profile/profile.service";
+import { SessionRepository } from "src/infrastructure/repository/session-repository.service";
+import { HasherService } from "./services/HasherService.service";
+import { TokenService } from "./services/TokenService.service";
 @Module({
     imports: [
         CqrsModule,
@@ -35,20 +34,23 @@ import { ProfileService } from "src/profile/profile.service";
     ],
     controllers: [AuthController],
     providers: [
-        AuthDomainService, CreateCommandHandler, 
-        LoginCommandHandler, RefreshTokenCommandHandler,
-        IdentityService, RefreshTokenRepository, ProfileService,
+        CreateCommandHandler, 
+        LoginCommandHandler, RefreshTokenCommandHandler, HasherService, TokenService,
         {
-            provide: 'IUserRepository',
-            useClass: UserRepository
+            provide: 'iIdentityRepository',
+            useClass: IdentityRepository
         }, 
         {
-            provide: 'IProfileRepository',
+            provide: 'iSessionRepository',
+            useClass: SessionRepository
+        },
+        {
+            provide: 'iProfileRepository',
             useClass: ProfileRepository
         }, 
         AccessJwtGuard, 
         RefreshJwtGuard
-    ], exports: ['IUserRepository','IProfileRepository']
+    ], exports: ['iIdentityRepository','iSessionRepository','iProfileRepository']
 
 })
 export class AuthModule {}

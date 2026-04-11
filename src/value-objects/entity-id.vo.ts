@@ -1,4 +1,4 @@
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class EntityId {
     private readonly value: string
@@ -9,7 +9,7 @@ export abstract class EntityId {
         this.value = value
     }
 
-    getValue(): string{
+    get getValue(): string{
         return this.value;
     }
 
@@ -18,7 +18,7 @@ export abstract class EntityId {
     }
 
     protected static generatedId(){
-        return uuid();
+        return uuidv4();
     }
 
 }

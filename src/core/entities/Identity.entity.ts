@@ -2,6 +2,7 @@ import { Email } from "src/value-objects/email.vo";
 import { UserId } from "src/value-objects/userid.vo";
 import { Profile } from "./profile.entity";
 import { Session } from "./session.entity";
+import { FirstName, LastName } from "src/value-objects/name.vo";
 
 interface IdentityProps {
   id: UserId;
@@ -56,6 +57,11 @@ export class Identity {
 
     get getProfile(){
         return this.profile
+    }
+
+    createNewProfile(firstName: FirstName, lastName: LastName){
+        const profile = Profile.create({ firstName, lastName, identityId: this.userId });
+        this.profile = profile;
     }
 
     createNewSession(hashedToken: string, expirationDays: number){

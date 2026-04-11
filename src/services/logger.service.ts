@@ -2,8 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 
 export class Context {
-    module: string;
-    method: string;
+    module!: string;
+    method!: string;
 }
 @Injectable()
 export class LoggerService extends Logger {

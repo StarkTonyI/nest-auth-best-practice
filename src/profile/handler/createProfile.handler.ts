@@ -1,5 +1,4 @@
 import { CommandHandler, EventBus, ICommandHandler } from "@nestjs/cqrs";
-import { ProfileDomainService } from "src/domains/profile.domain";
 import { Inject } from "@nestjs/common";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { DeleteProfileEvent } from "./events/deleteProfile.event"
@@ -8,7 +7,7 @@ import { CreateProfileHandler } from "./events/createProfile.events";
 
 @CommandHandler(CreateProfileHandler)
 export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandler>{
-    constructor(private readonly domain: ProfileDomainService,
+    constructor(
         @Inject('IProfileRepository')
         private readonly profileRepository: iProfileRepository,
         private readonly eventBus: EventBus,
@@ -16,15 +15,16 @@ export class ProfileCreateHandler implements  ICommandHandler<CreateProfileHandl
     ){}
     async execute(command: CreateProfileHandler): Promise<any> {
         const context = { method: "ProfileCreateHandler", module: "execute" }
-        const { userName, firstName, lastName, authId } = command;
-        this.logger.log(`Creation profile with authId - ${authId} started...`, context)
+        const { userName, firstName, lastName, identityId } = command.profile;
+        this.logger.log(`Creation profile with authId - ${identityId} started...`, context)
         let profile:any;
         try {
-            profile = await this.profileRepository.create({ userName, firstName, lastName, authId })
+            profile = await this.profileRepository.create({ userName, firstName, lastName, authId:identityId })
             this.logger.log(`Profile successfully created with id - ${profile.id}`)
         }catch(err){
-            this.logger.warn(`Profile creation failed, with user - ${authId} cause: ${err.message}`)
-            await this.eventBus.publish(new DeleteProfileEvent(authId, err.message))
+            const message = err instanceof Error ? err.message : String(err)
+            this.logger.warn(`Profile creation failed, with user - ${identityId} cause: ${message}`)
+            await this.eventBus.publish(new DeleteProfileEvent(identityId, message))
         }
 
         return Promise.resolve()

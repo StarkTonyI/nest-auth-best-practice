@@ -2,43 +2,43 @@ import { Injectable } from "@nestjs/common";
 import { Session as PrismaSession } from "@prisma/client";
 import { Session } from "src/core/entities/session.entity";
 import { PrismaService } from "src/database/dataBase.service";
-import { UserId } from "src/value-objects/userid.vo";
+import { iSessionRepository } from "src/interfaces/repository/sessoin-repository";
 
 @Injectable()
-export class SessionRepository {
+export class SessionRepository implements iSessionRepository{
     constructor(private readonly prisma: PrismaService){}
 
     async findByToken(hashedToken: string):Promise<Session | null>{
-        const token = await this.prisma.session.findUnique({
+        const session = await this.prisma.session.findUnique({
             where:{
                 hashedToken: hashedToken
             }
         })
-        if(!token) return null;
-        return this.refreshTokenMapper(token)
+        if(!session) return null;
+        return this.sessionMapper(session)
     }
 
-    async findByUserId(identityId: string): Promise<Session | null>{
-        const token = await this.prisma.session.findUnique({
+    async findById(identityId: string): Promise<Session | null>{
+        const session = await this.prisma.session.findUnique({
             where:{
                 identityId:identityId
             }
         })
-        if(!token) return null;
-        return this.refreshTokenMapper(token)
+        if(!session) return null;
+        return this.sessionMapper(session)
     }
 
-    async updateSession(token: PrismaSession): Promise<Session>{
+    async updateSession(session: PrismaSession): Promise<Session>{
         const updatedToken = await this.prisma.session.update({
-            where:{ id: token.id },
+            where:{ id: session.id },
             data:{
-                expiresAt:token.expiresAt,
+                expiresAt:session.expiresAt,
             }
         })
         return Session.formDate(updatedToken)
     }
 
-    async deleteSessionById(userId: string){
+    async deleteSessionById(userId: string): Promise<void>{
         await this.prisma.session.deleteMany({
             where:{
                 identityId: userId
@@ -47,11 +47,12 @@ export class SessionRepository {
     }
 
     async createSession(session: Session):Promise<Session>{
+        console.log(session)
         const refreshTokenCreated = await this.prisma.session.create({
             data:{
                 id: session.id,
                 hashedToken: session.hashedToken,
-                identityId: session.identityId.getValue(),
+                identityId: session.identityId.getValue,
                 expiresAt: session.expiresAt,
                 createdAt: session.createdAt,
             }
@@ -59,8 +60,10 @@ export class SessionRepository {
         return Session.formDate(refreshTokenCreated)
     }
 
-    refreshTokenMapper(session: PrismaSession): Session {
+    sessionMapper(session: PrismaSession): Session {
         return Session.formDate(session);
     }
 
 }
+
+

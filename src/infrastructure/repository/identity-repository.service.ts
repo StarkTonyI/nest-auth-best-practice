@@ -4,9 +4,9 @@ import { defaultIdentitySelect, expendedParams, } from '../../types/prisma-user'
 import { Prisma } from "@prisma/client";
 import { Identity } from "src/core/entities/Identity.entity";
 import { Identity as PrismaUser } from "@prisma/client";
-import { IdentityRepository } from "src/interfaces/repository/identity-repository";
+import { iIdentityRepository } from "src/interfaces/repository/identity-repository";
 @Injectable()
-export class UserRepository implements IdentityRepository{
+export class IdentityRepository implements iIdentityRepository{
     select = defaultIdentitySelect;
     constructor(private readonly prisma: PrismaService){};
 

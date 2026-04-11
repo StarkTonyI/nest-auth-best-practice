@@ -52,7 +52,7 @@ static create(createPayload: createPayload){
 static formData(createdPayload = { idStr: '', userNameStr:'', firstNameStr:'', lastNameStr: '', identityId: '', 
     createdAt:new Date(), updatedAt: new Date(), avatarUrl:'', bio: ''  }){
         const id = UserId.fromString(createdPayload.idStr);
-        const userName = new Name(createdPayload.userNameStr);
+        const userName = new UserName(createdPayload.userNameStr);
         const firstName = new FirstName(createdPayload.firstNameStr);
         const lastName = new LastName(createdPayload.lastNameStr);
         const identityId = UserId.fromString(createdPayload.identityId)

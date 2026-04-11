@@ -1,7 +1,5 @@
 import { IsBoolean, IsEmail, IsEnum, IsString, MaxLength, MinLength } from "class-validator";
 export default class RegisterUserDto {
-    @IsString()
-    userName!: string;
     @IsEmail()
     email!: string;
     @MinLength(8)

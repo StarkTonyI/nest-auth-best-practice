@@ -2,60 +2,71 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { RefreshTokenEvent } from "./events/refresh-token.event";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoggerService } from "src/services/logger.service";
-import { IdentityService } from "../identity.service";
-import { UserRepository } from "src/infrastructure/repository/identity-repository.service";
-import { JwtService } from "@nestjs/jwt";
-import { ApiConfigServices } from "src/configService/apiConfig.service";
-import { uuid } from "uuidv4";
+import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
+import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
+import { TokenService } from "../services/TokenService.service";
+import { Session } from "src/core/entities/session.entity";
+import { HasherService } from "../services/HasherService.service";
+
 @Injectable()
 @CommandHandler(RefreshTokenEvent)
 export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenEvent>{
     constructor(
         private readonly logger: LoggerService, 
-        private readonly identityService: IdentityService, 
-        @Inject("IUserRepository")
-        private readonly authRepository: UserRepository, 
-        private readonly jwt: JwtService,
-        private readonly configService: ApiConfigServices
+        @Inject("iSessionRepository")
+        private readonly sessoinRepository: iSessionRepository,
+        @Inject("iIdentityRepository")
+        private readonly identityRepository: iIdentityRepository,
+        private readonly tokenService: TokenService, 
+        private readonly hasherService: HasherService
+
     ){}
+    
     async execute(command: RefreshTokenEvent) {
-        const context = { module:'RefreshTokenHandler', method: 'Refresh token' }
+        const context = { module: 'RefreshTokenHandler', method: 'execute' };
         const { refreshToken } = command;
-        this.logger.log("Started refresh token", context)
+        
+        this.logger.log("Started refresh token", context);
 
-        const token = await this.identityService.validatoinRefreshToken(refreshToken)
+        const hashedCookieToken = await this.hasherService.hashToken(refreshToken)
+        const session = await this.sessoinRepository.findByToken(hashedCookieToken);
 
-        if(!token){
-            throw new UnauthorizedException;
+        console.log(refreshToken)
+        console.log(hashedCookieToken)
+
+        if (!session) {
+            this.logger.error("Session not found for refresh token", context);
+            throw new UnauthorizedException("Invalid refresh token");
+        }
+        this.logger.log(`Session found with identityId: ${session.identityId.getValue}`, context);
+
+        const user = await this.identityRepository.findById(session.identityId.getValue, {});
+
+        if (!user) {
+            this.logger.error(`User not found for identityId: ${session.identityId.getValue}`, context);
+            throw new UnauthorizedException("User not found");
         }
 
-        const user = await this.authRepository.findById(token.userId.getValue())
+        this.logger.log(`User found: ${user.userEmail}`, context);
 
-        if(!user){
-            throw new UnauthorizedException;
-        }
+        const { access_token, refresh_token } = await this.tokenService.generatedTokens(user.userId, user.userEmail);
+        this.logger.log("Tokens generated successfully", context);
 
-        await this.identityService.revokeRefreshToken(refreshToken)
+        const hashedToken = await this.hasherService.hashToken(refresh_token);
+        const sessoinEntity = new Session({ hashedToken, identityId: user.userId });
 
-        const payload = {
-            userId: user.userId.getValue(),
-            email: user.userEmail,
-            role: user.userRole,
-        }
+        await this.sessoinRepository.deleteSessionById(session.getIdentityId)
+        await this.sessoinRepository.createSession(sessoinEntity);
+        
+        console.log(hashedToken)
 
-         const access_token = this.jwt.sign(payload, {
-            secret: this.configService.authConfig.jwtSecret,
-            expiresIn: this.configService.authConfig.jwtExpirationTime
-         })
-
-         const refresh_token = uuid();
-
-         await this.identityService.createRefreshToken(user.userId, refreshToken)
-
+        this.logger.log("Session saved successfully", context);
         return { access_token, refresh_token };
     }
 }
 
-
-
-
+//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
+//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
+//cd5448d1-5f84-4b8e-88e5-dc7fe6fc5219
+//7f76fb4c1366ddfe257e92ffb2b6eeb5974c448f40fdae7d5fb8a728c33bc5ad
+//29d669eeacb9f3469922a3b3584aef9c9cbbf2144bf0153cfbdba7076b07b078

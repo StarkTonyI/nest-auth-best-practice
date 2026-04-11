@@ -13,8 +13,6 @@ export class RefreshJwtGuard implements CanActivate{
         const req = context.switchToHttp().getRequest() as Request;
 
         const token = req.cookies?.refreshToken
-        console.log(req.cookies)
-        console.log(token)
         if(!token) { 
             this.logger.log("Cookies is not exist", methods)
             throw new UnauthorizedException;

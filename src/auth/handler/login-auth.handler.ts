@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { LoginEvent } from "./events/login-auth.event";
 import { LoggerService } from "src/services/logger.service";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
 import { TokenService } from "../services/TokenService.service";
-import { type IdentityRepository } from "src/interfaces/repository/identity-repository";
-import { passwordHash } from "../services/passwordHash.service";
-import { SessionRepository } from "src/infrastructure/repository/session-repository.service";
+import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
+import { HasherService } from "../services/HasherService.service";
+import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
 
 @Injectable()
 @CommandHandler(LoginEvent)
@@ -16,28 +16,25 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
         private readonly logger: LoggerService, 
         private readonly tokenService: TokenService, 
         @Inject("iIdentityRepository")
-        private readonly identityRepository: IdentityRepository,
-        @Inject("ISessionRepository")
-        private readonly sessoinRepository: SessionRepository,
-        private readonly passwordHash: passwordHash, 
+        private readonly identityRepository: iIdentityRepository,
+        @Inject("iSessionRepository")
+        private readonly sessoinRepository: iSessionRepository,
+        private readonly passwordHash: HasherService 
     ){};
     async execute(command: LoginEvent) {
         const { login } = command;
-        
         this.logger.log("Started login process for email: " + login.email);
-
         try {
             const email = new Email(login.email);
             const password = new Password(login.password);
 
             this.logger.log("Validating user credentials");
-            const findUser = await this.identityRepository.findByEmail(email.getValue(), {});
+            const findUser = await this.identityRepository.findByEmail(email.getValue(), { passwordHash: true });
             
             if (!findUser) {
                 this.logger.warn("User not found for email: " + login.email);
                 throw new Error("User does not exist");
             }
-
             this.logger.log("Comparing passwords for user: " + findUser.userId);
             const passwordCompare = await this.passwordHash.compare(password.getValue, findUser.userPasswordHash);
             
@@ -50,19 +47,22 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
             const { access_token, refresh_token, expiresIn } = await this.tokenService.generatedTokens(findUser.userId, findUser.userEmail);
             
             this.logger.log("Creating session for user: " + findUser.userId);
-            const session = findUser.createNewSession(refresh_token, expiresIn);
+            const hashedToken = await this.passwordHash.hashToken(refresh_token)
+            const session = findUser.createNewSession(hashedToken, expiresIn);
             
+            await this.sessoinRepository.deleteSessionById(session.identityId.getValue)
             await this.sessoinRepository.createSession(session);
 
             this.logger.log("Login completed successfully for user: " + findUser.userId);
             
             return {
-                id: findUser.userId.getValue(),
+                id: findUser.userId.getValue,
                 access_token,
                 refresh_token,
             };
         } catch (error) {
-            this.logger.error("Login failed: " + error.message);
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error("Login failed: " + message);
             throw error;
         }
     }

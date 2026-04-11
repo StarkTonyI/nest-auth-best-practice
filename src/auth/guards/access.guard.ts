@@ -1,20 +1,16 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { AuthDomainService } from "src/domains/auth.domain";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { ApiConfigServices } from "src/configService/apiConfig.service";
 import { Request } from "express";
-import { UserRepository } from "src/infrastructure/repository/identity-repository.service";
-import { SafeUser } from "src/types/prisma-user";
 import { REQ } from "../enums/auth.enum";
 import { LoggerService } from "src/services/logger.service";
+import { error } from "console";
 @Injectable()
 export class AccessJwtGuard implements CanActivate{
     constructor(
         private readonly jwt: JwtService,
         private readonly config: ApiConfigServices,
-        private readonly domain: AuthDomainService,
         private readonly logger: LoggerService,
     ){}
 
@@ -43,7 +39,7 @@ export class AccessJwtGuard implements CanActivate{
             }) as JwtPayload;
             
 
-            if(!payloadJwt.id){
+            if(!payloadJwt.userId){
                 this.logger.warn("Invalid payload", methods)
                 throw new UnauthorizedException;
             }
@@ -51,8 +47,8 @@ export class AccessJwtGuard implements CanActivate{
 
             return true;
             
-        }catch(err){
-            if(err.name === 'TokenExpiredError'){
+        }catch(error){
+            if(error instanceof Error && error.name === 'TokenExpiredError'){
                 throw new UnauthorizedException('TokenExpired')
             }
             throw new UnauthorizedException("Invalid token")

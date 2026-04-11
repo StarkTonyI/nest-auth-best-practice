@@ -14,8 +14,8 @@ userCreated = (events$:Observable<any>): Observable<ICommand> => {
     return events$.pipe(
         ofType(authUserCreatedEvent),
         map((event) => {
-            this.logger.log(`Started create profile with authId: ${event.authId}`)
-            return new CreateProfileHandler(event.userName, event.lastName, event.firstName, event.authId)
+            this.logger.log(`Started create profile with authId: ${event.profile.identityId}`)
+            return new CreateProfileHandler(event.profile)
         })
     )
 }
