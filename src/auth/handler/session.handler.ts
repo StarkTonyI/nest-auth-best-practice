@@ -7,6 +7,7 @@ import { type iIdentityRepository } from "src/interfaces/repository/identity-rep
 import { TokenService } from "../services/TokenService.service";
 import { Session } from "src/core/entities/session.entity";
 import { HasherService } from "../services/HasherService.service";
+import { EntityNotFoundException } from "src/exeption/domain-exeptions";
 
 @Injectable()
 @CommandHandler(RefreshTokenEvent)
@@ -25,32 +26,29 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
     async execute(command: RefreshTokenEvent) {
         const context = { module: 'RefreshTokenHandler', method: 'execute' };
         const { refreshToken } = command;
-        
-        this.logger.log("Started refresh token", context);
 
         const hashedCookieToken = await this.hasherService.hashToken(refreshToken)
         const session = await this.sessoinRepository.findByToken(hashedCookieToken);
 
         if (!session) {
-            this.logger.error("Session not found for refresh token", context);
-            throw new UnauthorizedException("Invalid refresh token");
+            throw new EntityNotFoundException("Session", refreshToken);
         }
         this.logger.log(`Session found with identityId: ${session.identityId.getValue}`, context);
 
-        const user = await this.identityRepository.findById(session.identityId.getValue, {});
+        const identity = await this.identityRepository.findById(session.identityId.getValue, {});
 
-        if (!user) {
+        if (!identity) {
             this.logger.error(`User not found for identityId: ${session.identityId.getValue}`, context);
-            throw new UnauthorizedException("User not found");
+            throw new EntityNotFoundException("User", session.identityId.getValue);
         }
 
-        this.logger.log(`User found: ${user.userEmail}`, context);
+        this.logger.log(`User found: ${identity.userEmail}`, context);
 
-        const { access_token, refresh_token } = await this.tokenService.generatedTokens(user.userId, user.userEmail);
+        const { access_token, refresh_token } = await this.tokenService.generatedTokens(identity.identityId, identity.userEmail);
         this.logger.log("Tokens generated successfully", context);
 
         const hashedToken = await this.hasherService.hashToken(refresh_token);
-        const sessoinEntity = new Session({ hashedToken, identityId: user.userId });
+        const sessoinEntity = new Session({ hashedToken, identityId: identity.identityId });
 
         await this.sessoinRepository.deleteSessionById(session.getIdentityId)
         await this.sessoinRepository.createSession(sessoinEntity);

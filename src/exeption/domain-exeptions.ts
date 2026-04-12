@@ -1,35 +1,35 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
+import { measureMemory } from "vm";
 
 interface details {
-    entity: string;
-    entityId: string;
-    reason: string;
+  reason: string;
+  entityId: string;
 }
 
+type DeatilsStringMix = details | string;
+
 export class DomainException extends HttpException {
-    details?: details;
-    constructor(message: string, status: HttpStatus, details?: details) {
+  details?: DeatilsStringMix;
+  constructor(message: string, status: HttpStatus, details?: DeatilsStringMix) {
       super(message, status);
-      this.details = details;
       this.name = this.constructor.name;
+      this.details = details
   }
 }
 
 // Entity not found
 export class EntityNotFoundException extends DomainException {
-  constructor(entityName: string,  details?: details) {
-    const message = `${entityName} not found`
+  constructor(entityName: string, details: DeatilsStringMix) {
+    const message = `${entityName} not found`;
     super(message, HttpStatus.NOT_FOUND, details);
   }
 }
 
 // Entity already exists
 export class EntityAlreadyExistsException extends DomainException {
-  constructor(entityName: string, identifier?: string) {
-    const message = identifier
-      ? `${entityName} with this ${identifier} already exists`
-      : `${entityName} already exists`;
-    super(message, HttpStatus.CONFLICT);
+  constructor(entityName: string, details: DeatilsStringMix) {
+    const message = `${entityName} already exist`
+    super(message, HttpStatus.CONFLICT, details);
   }
 }
 
@@ -42,8 +42,8 @@ export class InvalidInputException extends DomainException {
 
 // Authentication exceptions
 export class AuthenticationException extends DomainException {
-  constructor(message: string) {
-    super(message, HttpStatus.UNAUTHORIZED);
+  constructor(message: string, details: DeatilsStringMix) {
+    super(message, HttpStatus.UNAUTHORIZED, details);
   }
 }
 

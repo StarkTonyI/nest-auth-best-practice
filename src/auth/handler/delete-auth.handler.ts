@@ -4,6 +4,7 @@ import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@n
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { LoggerService } from "../../services/logger.service";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
+import { EntityNotFoundException } from "src/exeption/domain-exeptions";
 
 @Injectable()
 @CommandHandler(DeleteProfileAndUserEvent)
@@ -26,17 +27,12 @@ export class DeleteAuthHandler implements ICommandHandler<DeleteProfileAndUserEv
 
         const userExist = this.authRepo.findById(authId.getValue, {})
         if(!userExist){
-            this.logger.warn(`Cant delete user, user dont exist - ${authId}`, context);
-            throw new NotFoundException('User dont exist!')
+            throw new EntityNotFoundException('User!', authId.getValue)
         }
         try {
             await this.authRepo.delete(authId.getValue);
             await this.profileRepo.delete(authId.getValue)
 
-            this.logger.logger(
-            `Profile with such authId: ${authId} deleted successfully. Dispatching event.`,
-            context,
-            );
         } catch(err){
             this.logger.warn(`Cant delete profile and user with authId: ${authId}`)
             throw new UnauthorizedException({ message: 'Deleted fail', statusCode: 400, error: err })

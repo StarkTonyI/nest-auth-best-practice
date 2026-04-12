@@ -1,8 +1,10 @@
+import { InvalidInputException } from "src/exeption/domain-exeptions";
+
 export class Password {
     private readonly password: string
     constructor(password: string){
         if(!this.isValid(password)) {
-            throw new Error("Password wrong")
+            throw new InvalidInputException("Password wrong")
         }
         this.password = password;
     }

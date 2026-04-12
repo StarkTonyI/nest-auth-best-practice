@@ -40,6 +40,10 @@ export class Identity {
         return this.email;
     }
 
+    get userEmailValue(){
+        return this.email.getValue;
+    }
+
     get userPasswordHash(){
         return this.passwordHash;
     }
@@ -51,8 +55,12 @@ export class Identity {
         };
     }
 
-    get userId(){
-        return this.id
+    get identityId(){
+        return this.id;
+    }
+
+    get identityIdValue(){
+        return this.id.getValue
     }
 
     get getProfile(){
@@ -60,12 +68,12 @@ export class Identity {
     }
 
     createNewProfile(firstName: FirstName, lastName: LastName){
-        const profile = Profile.create({ firstName, lastName, identityId: this.userId });
+        const profile = Profile.create({ firstName, lastName, identityId: this.id });
         this.profile = profile;
     }
 
     createNewSession(hashedToken: string, expirationDays: number){
-        const identityId = this.userId;
+        const identityId = this.id;
         const session = new Session({ hashedToken, identityId, expirationDays })
         this.session = session;
         return session;

@@ -4,7 +4,6 @@ export class UserId extends EntityId{
     constructor(id:string){
         super(id)
     }
-
      static create(value?:string): UserId{
         return new UserId(value || UserId.generatedId())
     }

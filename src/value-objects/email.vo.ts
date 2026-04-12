@@ -1,8 +1,10 @@
+import { InvalidInputException } from "src/exeption/domain-exeptions";
+
 export class Email {
     private readonly email: string;
     constructor(email: string){
         if(!this.isValid(email)){
-            throw new Error("Email form incorrect")
+            throw new InvalidInputException("Email form incorrect")
         }
         this.email = email;
     }

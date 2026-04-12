@@ -1,12 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Request } from "express";
 import { REQ, TOKEN } from "../enums/auth.enum";
-import { LoggerService } from "src/services/logger.service";
+import { AuthenticationException } from "src/exeption/domain-exeptions";
 @Injectable()
 export class RefreshJwtGuard implements CanActivate{
-    constructor(
-        private readonly logger: LoggerService
-    ){}
+    constructor(){}
 
     async canActivate(context: ExecutionContext) {
         const methods = { method: "Refresh token", module:"Refresh guard" };
@@ -14,8 +12,7 @@ export class RefreshJwtGuard implements CanActivate{
 
         const token = req.cookies?.refreshToken
         if(!token) { 
-            this.logger.log("Cookies is not exist", methods)
-            throw new UnauthorizedException;
+            throw new AuthenticationException("Token is not exist or invalid!", { reason: "There is no token in the cookie.", entityId:"" });
         }
         req[REQ.rawRefresh] = token;
 

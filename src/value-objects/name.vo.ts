@@ -1,10 +1,11 @@
 import { randomBytes } from "crypto";
+import { InvalidInputException } from "src/exeption/domain-exeptions";
 
 export class Name {
     private readonly value: string
     constructor(value: string){
         if(!this.isValid(value)){
-            throw new Error('Incorrect name')
+            throw new InvalidInputException(`Incorrect ${this.constructor.name}`)
         }
         this.value = this.formatName(value);
     }
