@@ -16,7 +16,8 @@ model Identity {
   
   profile      Profile?
   sessions     Session[]
-  
+  roles         UserRole[]
+
   @@map("identities")
 }
 // --- Модуль Users (Profile & Personal Data) ---
@@ -54,3 +55,46 @@ model Session {
   @@map("sessions")
 }
 
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       UserRole[]
+  permissions RolePermission[]
+} 
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  resource    String
+  action      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles       RolePermission[]
+}
+
+model UserRole {
+  user      Identity     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String
+  createdAt DateTime @default(now())
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId       String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  permissionId String
+  createdAt    DateTime   @default(now())
+
+  @@id([roleId, permissionId])
+}
