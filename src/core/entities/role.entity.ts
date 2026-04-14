@@ -1,15 +1,41 @@
-import { v4 as uuidv4 } from 'uuid';
+import { RoleId } from "src/value-objects/role-id.vo";
 
-export class Role {
-    id: string;
+interface RoleInterface {
+    id: RoleId, 
+    name: string,
+    descritpion: string,
+    isDefault: boolean;
+
+    createdAt?: Date,
+    updatedAt?: Date
+}
+
+export class Role { 
+    id: RoleId;
     name: string;
     description: string;
-    constructor(name: string, description: string, id?: string){
-        this.id = id || uuidv4(),
-        this.name = name,
-        this.description = description
+    isDefault:boolean;
+    createdAt: Date;
+    updatedAt:Date;
 
+    constructor(rolePayload: RoleInterface){
+        this.id = rolePayload.id;
+        this.name = rolePayload.name;
+        this.description = rolePayload.descritpion;
+        this.isDefault = rolePayload.isDefault;
+        this.createdAt = rolePayload.createdAt ? rolePayload.createdAt : new Date();
+        this.updatedAt = rolePayload.updatedAt ? rolePayload.updatedAt : new Date();
     }
 
-    
+    static create(rolePayload: RoleInterface){
+       const id = rolePayload.id ? rolePayload.id : RoleId.createId();
+       const { name, descritpion, isDefault } = rolePayload;
+       return new Role({ id, name, descritpion, isDefault})
+    }
+
+    static formData(rolePayload: RoleInterface){
+        const { id, name, descritpion, isDefault, createdAt, updatedAt } = rolePayload;
+        return new Role({ id, name, descritpion, isDefault, createdAt, updatedAt })
+    }
+
 }

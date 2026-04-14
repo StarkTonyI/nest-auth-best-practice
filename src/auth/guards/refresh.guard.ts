@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Request } from "express";
-import { REQ, TOKEN } from "../enums/auth.enum";
+import { REQ } from "../enums/auth.enum";
 import { AuthenticationException } from "src/exeption/domain-exeptions";
 @Injectable()
 export class RefreshJwtGuard implements CanActivate{

@@ -17,42 +17,38 @@ import { EntityAlreadyExistsException } from "src/exeption/domain-exeptions";
 export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEvent> {
     constructor(
         private readonly eventBus: EventBus,
-        private readonly logger: LoggerService,
         @Inject("iIdentityRepository")
         private readonly identityRepository: iIdentityRepository,
         private readonly passwordHash: HasherService
     ){};
 
 async execute(command: CommandCreateAuthEvent): Promise<any> {
-    const context = { method: 'Register user', module: "CreateCommandHandler" };
     const { user } = command;
 
-    
     const firstName = new FirstName(user.firstName);
     const lastName = new LastName(user.lastName);
     const email = new Email(user.email);
     const password = new Password(user.password);
+    
 
     const findUser = await this.identityRepository.findByEmail(email.getValue, {});
     if (findUser) {
         throw new EntityAlreadyExistsException("User already exist", findUser.identityIdValue);
     }
 
-    
-        const hash = await this.passwordHash.hash(password.getValue);
+    const hash = await this.passwordHash.hash(password.getValue);
 
-        const validatedUser = Identity.create(email, hash);
-        const userCreated = await this.identityRepository.create(validatedUser);
+    const validatedUser = Identity.create(email, hash);
+    const userCreated = await this.identityRepository.create(validatedUser);
 
-        userCreated.createNewProfile(firstName, lastName);
+    userCreated.createNewProfile(firstName, lastName);
 
-        if(!userCreated.getProfile) throw new Error("Profile is not created");
+    if(!userCreated.getProfile) throw new Error("Profile is not created");
         
-        this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
+    this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
         
-        this.logger.log(`Registration user completed: ${user.email}`, context);
 
-        return userCreated;
+    return userCreated;
     
 }
 }

@@ -28,13 +28,11 @@ export class AccessJwtGuard implements CanActivate{
         if(!token) {
             throw new AuthenticationException("Token invalid or not exist.", { reason: "Token is not exist in base", entityId:'' });
         }
-
         try{
             const payloadJwt = await this.jwt.verifyAsync(token, {
                 secret: secret, 
             }) as JwtPayload;
             
-
             if(!payloadJwt.userId){
                 throw new AuthenticationException("Token invalid or not exist", { reason: "Invalid payload", entityId: ''});
             }
