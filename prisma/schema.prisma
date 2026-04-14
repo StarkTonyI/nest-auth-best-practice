@@ -55,6 +55,16 @@ model Session {
   @@map("sessions")
 }
 
+model UserRole {
+  user      Identity     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String
+  createdAt DateTime @default(now())
+
+  @@id([userId, roleId])
+}
+
 model Role {
   id          String   @id @default(uuid())
   name        String   @unique
@@ -79,16 +89,6 @@ model Permission {
   roles       RolePermission[]
 }
 
-model UserRole {
-  user      Identity     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId    String
-  createdAt DateTime @default(now())
-
-  @@id([userId, roleId])
-}
-
 model RolePermission {
   role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId       String
@@ -98,3 +98,12 @@ model RolePermission {
 
   @@id([roleId, permissionId])
 }
+
+
+
+
+
+
+
+
+

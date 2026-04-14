@@ -21,7 +21,6 @@ export class AccessJwtGuard implements CanActivate{
     }
 
     async canActivate(context: ExecutionContext) {
-        const methods = { method: "Access token", module:"Access guard" };
         const req = context.switchToHttp().getRequest() as Request;
         const secret = this.config.authConfig.jwtSecret;
      
