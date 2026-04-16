@@ -1,8 +1,7 @@
-import { ConflictException, Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CommandCreateAuthEvent } from "./events/create-auth.events";
 import { authUserCreatedEvent } from "../events/auth-user-created.event";
-import { LoggerService } from "../../services/logger.service";
 import { FirstName, LastName } from "src/value-objects/name.vo";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
