@@ -3,6 +3,7 @@ import { UserId } from "src/value-objects/userid.vo";
 import { Profile } from "./profile.entity";
 import { Session } from "./session.entity";
 import { FirstName, LastName } from "src/value-objects/name.vo";
+import { Role } from "./role.entity";
 
 interface IdentityProps {
   id: UserId;
@@ -11,6 +12,7 @@ interface IdentityProps {
   createdAt?: Date;
   updatedAt?: Date;
   
+  role?: Role[];
   profile?: Profile;
   session?: Session
 }
@@ -23,6 +25,7 @@ export class Identity {
     private updatedAt: Date
     private profile?: Profile;
     private session?: Session
+    private role?: Role[]
     
     constructor(props: IdentityProps){
         this.id = props.id,
@@ -34,6 +37,7 @@ export class Identity {
 
         this.profile = props.profile;
         this.session = props.session;
+        this.role = props.role;
     }
 
     get userEmail(){
@@ -67,6 +71,10 @@ export class Identity {
         return this.profile
     }
 
+    get getRoles(){
+        return this.role;
+    }
+
     createNewProfile(firstName: FirstName, lastName: LastName){
         const profile = Profile.create({ firstName, lastName, identityId: this.id });
         this.profile = profile;
@@ -78,6 +86,10 @@ export class Identity {
         this.session = session;
         return session;
     }
+
+    addRoles(role: Role){
+        this.role?.push(role)
+    }   
 
     static create(email: Email, passwordHash: string){
         const id = UserId.create()

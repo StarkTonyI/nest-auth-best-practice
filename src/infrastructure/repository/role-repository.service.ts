@@ -4,7 +4,7 @@ import { Role } from "src/core/entities/role.entity";
 import { PrismaService } from "src/database/dataBase.service";
 
 @Injectable()
-export class SessionRepository{
+export class RoleRepository{
     constructor(private readonly prisma: PrismaService){}
 
   async findById(id: string): Promise<Role | null>{
@@ -48,6 +48,18 @@ export class SessionRepository{
         })
         return this.roleMapper(createdRole)
     }
+
+    async findDefaultRole(){
+        const findRole = await this.prisma.role.findFirst({
+            where:{
+                isDefault: true
+            }
+        })
+        if(!findRole) return null;
+        return this.roleMapper(findRole)
+    }
+
+
 
     roleMapper(role: PrismaRole): Role {
         return Role.formData(role);

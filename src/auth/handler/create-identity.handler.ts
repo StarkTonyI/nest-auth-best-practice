@@ -8,7 +8,8 @@ import { Password } from "src/value-objects/password.vo";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
 import { HasherService } from "../services/HasherService.service";
 import { Identity } from "src/core/entities/Identity.entity";
-import { EntityAlreadyExistsException } from "src/exeption/domain-exeptions";
+import { EntityAlreadyExistsException, EntityNotFoundException } from "src/exeption/domain-exeptions";
+import { RoleRepository } from "src/infrastructure/repository/role-repository.service";
 
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
@@ -18,7 +19,8 @@ export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEv
         private readonly eventBus: EventBus,
         @Inject("iIdentityRepository")
         private readonly identityRepository: iIdentityRepository,
-        private readonly passwordHash: HasherService
+        private readonly passwordHash: HasherService, 
+        private readonly roleRepository: RoleRepository
     ){};
 
 async execute(command: CommandCreateAuthEvent): Promise<any> {
@@ -38,7 +40,17 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     const hash = await this.passwordHash.hash(password.getValue);
 
     const validatedUser = Identity.create(email, hash);
+
+    const role = await this.roleRepository.findDefaultRole();
+
+    if(!role){
+        throw new EntityNotFoundException("Role", "Default role is not exist!")
+    }
+    
+    validatedUser.addRoles(role)
+
     const userCreated = await this.identityRepository.create(validatedUser);
+
 
     userCreated.createNewProfile(firstName, lastName);
 

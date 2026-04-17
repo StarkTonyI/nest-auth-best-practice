@@ -16,7 +16,25 @@ export class IdentityRepository implements iIdentityRepository{
                 data: { 
                     email: identity.userEmail.getValue,
                     passwordHash: identity.userPasswordHash, 
-                },  select: this.select
+                    roles: {
+                        create: identity.getRoles?.map((role)=>({
+                            role: {
+                                connect: { id:role.id.getValue }     
+                            }
+                        }))
+                    }
+                },
+                include: {
+                    roles: {
+                        include: {
+                            role: {
+                                include:{
+                                    permissions:true
+                                }
+                            }
+                        }
+                    }
+                }
                 })
             return Identity.formData({...userCreated, passwordHash:'' })
                     
@@ -29,6 +47,7 @@ export class IdentityRepository implements iIdentityRepository{
         }
         throw e; 
 }}
+
     async findById(id: string, expend:Partial<expendedParams>): Promise<Identity | null> {
 
         const findIdentity =  await this.prisma.identity.findUnique({
@@ -41,6 +60,7 @@ export class IdentityRepository implements iIdentityRepository{
         return Identity.formData(findIdentity)
 
 }
+
     async findByEmail(email: string, expend:Partial<expendedParams>): Promise<Identity | null>{
         const findUser = await this.prisma.identity.findUnique(({
             where:{
@@ -72,6 +92,7 @@ export class IdentityRepository implements iIdentityRepository{
     }
         throw e; 
 }}
+
     async delete(id: string){
         try {
             await this.prisma.identity.delete({
