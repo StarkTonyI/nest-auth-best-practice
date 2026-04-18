@@ -46,20 +46,18 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     if(!role){
         throw new EntityNotFoundException("Role", "Default role is not exist!")
     }
-    
-    validatedUser.addRoles(role)
+    console.log(role)
+    validatedUser.addRoles(role);
+    console.log(validatedUser);
 
     const userCreated = await this.identityRepository.create(validatedUser);
-
 
     userCreated.createNewProfile(firstName, lastName);
 
     if(!userCreated.getProfile) throw new Error("Profile is not created");
         
-    this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
-        
+    await this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
 
     return userCreated;
-    
 }
 }

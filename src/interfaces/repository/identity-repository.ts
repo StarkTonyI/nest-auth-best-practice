@@ -4,8 +4,7 @@ import { expendedParams } from 'src/types/prisma-user';
 
 export interface iIdentityRepository {
   create:(Identity: Identity)=> Promise<Identity>
-  findByEmail:(email: string, expend: Partial<expendedParams>)=> Promise<Identity | null>
-  update: (id: string, update: Partial<PrismaIdentity>)=> Promise<Identity>
-  findById:(id: string, expend: Partial<expendedParams>)=> Promise<Identity | null>;
+  findByEmail:(email: string)=> Promise<Identity | null>
+  findById:(id: string)=> Promise<Identity | null>;
   delete:(id: string)=> void;
 }

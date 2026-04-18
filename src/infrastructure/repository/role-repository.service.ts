@@ -17,14 +17,8 @@ export class RoleRepository{
         return this.roleMapper(role)
     }
 
-    async updateRole(role: Partial<PrismaRole>): Promise<Role>{
-        const updatedRole = await this.prisma.role.update({
-            where:{ id: role.id },
-            data:{
-                role
-            }
-        })
-        return this.roleMapper(updatedRole)
+    async updateRole(role: Partial<PrismaRole>){
+
     }
 
     async deleteRole(roleId: string): Promise<void>{

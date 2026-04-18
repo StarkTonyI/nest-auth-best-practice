@@ -4,15 +4,15 @@ import { Profile } from "./profile.entity";
 import { Session } from "./session.entity";
 import { FirstName, LastName } from "src/value-objects/name.vo";
 import { Role } from "./role.entity";
-
+import { Identity as PrismaIdentity } from "@prisma/client"
 interface IdentityProps {
-  id: UserId;
-  email: Email;
-  passwordHash: string;
+   id: UserId;
+   email: Email;
+   passwordHash: string;
   createdAt?: Date;
   updatedAt?: Date;
   
-  role?: Role[];
+  role: Role[];
   profile?: Profile;
   session?: Session
 }
@@ -25,7 +25,7 @@ export class Identity {
     private updatedAt: Date
     private profile?: Profile;
     private session?: Session
-    private role?: Role[]
+    private role: Role[] = []
     
     constructor(props: IdentityProps){
         this.id = props.id,
@@ -88,17 +88,17 @@ export class Identity {
     }
 
     addRoles(role: Role){
-        this.role?.push(role)
+        this.role.push(role)
     }   
 
     static create(email: Email, passwordHash: string){
         const id = UserId.create()
-        return new Identity({ id, email, passwordHash })
+        return new Identity({ id, email, passwordHash, role:[] })
     } 
 
-    static formData(data: { id: string, passwordHash:string, email: string, createdAt: Date, updatedAt: Date } ):Identity{
+    static formData(data: { id: string, email: string, passwordHash: string, createdAt: Date, updatedAt: Date, roles: Role[] } ):Identity{
         const id = UserId.fromString(data.id)
         const email = new Email(data.email);
-        return new Identity({...data, email: email, id: id})
+        return new Identity({...data, email, id, role: data.roles})
     }
 }

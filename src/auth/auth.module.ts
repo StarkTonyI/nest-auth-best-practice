@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AuthController } from "./identity.controller";
+import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../database/dataBase.module";
 import { ConfigModule } from "@nestjs/config";
 import { ApiConfigModule } from "../configService/apiConfig.module"; // Проверь путь
@@ -16,6 +16,7 @@ import { RefreshTokenCommandHandler } from "./handler/session.handler";
 import { SessionRepository } from "src/infrastructure/repository/session-repository.service";
 import { HasherService } from "./services/HasherService.service";
 import { TokenService } from "./services/TokenService.service";
+import { RoleRepository } from "src/infrastructure/repository/role-repository.service";
 @Module({
     imports: [
         CqrsModule,
@@ -47,7 +48,7 @@ import { TokenService } from "./services/TokenService.service";
         {
             provide: 'iProfileRepository',
             useClass: ProfileRepository
-        }, 
+        }, RoleRepository,
         AccessJwtGuard, 
         RefreshJwtGuard
     ], exports: ['iIdentityRepository','iSessionRepository','iProfileRepository']

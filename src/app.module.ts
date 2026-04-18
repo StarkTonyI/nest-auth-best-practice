@@ -1,7 +1,7 @@
 import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/identity.module';
+import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './database/dataBase.module';
 import { PrismaService } from './database/dataBase.service';
 import { ApiConfigModule } from './configService/apiConfig.module';
@@ -15,7 +15,7 @@ import { LoggerService } from './services/logger.service';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { RequestIdMiddleware } from './middleware/request-id.middleware';
 import { ProfileController } from './profile/profile.controller';
-import { AuthController } from './auth/identity.controller';
+import { AuthController } from './auth/auth.controller';
 import { DomainExceptionFilter } from './filters/domain-exeption';
 
 @Global()

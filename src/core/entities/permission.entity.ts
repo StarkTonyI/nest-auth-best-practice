@@ -33,10 +33,11 @@ export class Permission {
         return new Permission({ ...permission, id })
     }
 
-    static formDate(permissionStr:{ id: string, nameStr: string, description: string, resourceStr: string, 
+    static formDate(permissionStr:{ id: string, description: string, resourceStr: string, 
         actionStr: string, createdAt: Date, updatedAt: Date }): Permission{
         const { id, description, resourceStr, actionStr, createdAt, updatedAt } = permissionStr;
-        return new Permission({ id:PermissionId.fromString(id), description, resourceAction: new ActionResource(actionStr, resourceStr), createdAt, updatedAt })
+        return new Permission({ id:PermissionId.fromString(id), description, resourceAction: new ActionResource(actionStr, resourceStr),
+             createdAt, updatedAt })
     }
 
 }

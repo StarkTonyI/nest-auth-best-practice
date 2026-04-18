@@ -45,7 +45,7 @@ export class Role {
        return new Role({ id, name, description, isDefault})
     }
 
-    static formData(rolePayload: PrismaRole){
+    static formData(rolePayload: PrismaRole, permission?: Permission[]){
         const { name, description, isDefault, createdAt, updatedAt } = rolePayload;
         const id = RoleId.fromString(rolePayload.id)
         return new Role({ id, name, description, isDefault, createdAt, updatedAt })
