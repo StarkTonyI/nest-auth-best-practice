@@ -16,8 +16,6 @@ export class IdentityRepository implements iIdentityRepository{
     select = defaultIdentitySelect;
     constructor(private readonly prisma: PrismaService){};
 
-
-
     async create(identity: Identity): Promise<Identity>{
         try {
             const userCreated = await this.prisma.identity.create({
@@ -25,7 +23,7 @@ export class IdentityRepository implements iIdentityRepository{
                     email: identity.userEmail.getValue,
                     passwordHash: identity.userPasswordHash, 
                     roles: {
-                        create: identity.getRoles?.map((role)=>({
+                        create: identity.getRoles.map((role)=>({
                             role: {
                                 connect: { id:role.id.getValue }     
                             }
@@ -37,14 +35,17 @@ export class IdentityRepository implements iIdentityRepository{
                         include: {
                             role: {
                                 include:{
-                                    permissions:true
+                                    permissions:{
+                                        include: {
+                                            permission:true
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 })
-         
             return this.mapToModel(userCreated as UserWithRelations)
                     
         } catch (e) {
@@ -108,8 +109,6 @@ export class IdentityRepository implements iIdentityRepository{
         return this.mapToModel(findIdentity)
     }
    
-
-
     async delete(id: string){
         try {
             await this.prisma.identity.delete({
@@ -130,13 +129,17 @@ export class IdentityRepository implements iIdentityRepository{
         
     }   
 
-
     mapToModel(record: UserWithRelations): Identity{
        
+        console.log(record.roles)
+        console.log(record.roles[0].role)
+
+
         const roles = record.roles.map((roleRelation, index) => {
         const role = roleRelation.role;
+
         const permissionForm = role.permissions.map((permissionRelation)=>{
-        const permission = permissionRelation.permission;          
+        const permission = permissionRelation.permission;       
             return Permission.formDate({ 
                 id: permission.id, 
                 resourceStr: permission.resource, 
@@ -146,6 +149,7 @@ export class IdentityRepository implements iIdentityRepository{
                 updatedAt: permission.updatedAt
             })
         })  
+     
         return Role.formData({ 
             id: role.id, 
             name: role.name, 
@@ -154,6 +158,7 @@ export class IdentityRepository implements iIdentityRepository{
             createdAt: role.createdAt, 
             updatedAt: role.updatedAt }, 
             permissionForm)
+
     })
 
     return Identity.formData({ 
@@ -165,4 +170,6 @@ export class IdentityRepository implements iIdentityRepository{
          roles
         })
 
-}}
+}
+
+}

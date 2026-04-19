@@ -2,9 +2,9 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { DeleteProfileAndUserEvent } from "./events/delete-auth.events";
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
-import { LoggerService } from "../../services/logger.service";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
 import { EntityNotFoundException } from "src/exeption/domain-exeptions";
+import { LoggerService } from "src/services/logger.service";
 
 @Injectable()
 @CommandHandler(DeleteProfileAndUserEvent)
@@ -25,7 +25,7 @@ export class DeleteAuthHandler implements ICommandHandler<DeleteProfileAndUserEv
 
         if(!authId) throw new Error('Incorrect data');
 
-        const userExist = this.authRepo.findById(authId.getValue, {})
+        const userExist = this.authRepo.findById(authId.getValue)
         if(!userExist){
             throw new EntityNotFoundException('User!', authId.getValue)
         }

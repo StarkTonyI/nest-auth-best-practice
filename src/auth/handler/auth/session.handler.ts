@@ -4,10 +4,10 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoggerService } from "src/services/logger.service";
 import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
-import { TokenService } from "../services/TokenService.service";
 import { Session } from "src/core/entities/session.entity";
-import { HasherService } from "../services/HasherService.service";
 import { EntityNotFoundException } from "src/exeption/domain-exeptions";
+import { TokenService } from "src/auth/services/TokenService.service";
+import { HasherService } from "src/auth/services/HasherService.service";
 
 @Injectable()
 @CommandHandler(RefreshTokenEvent)
@@ -35,7 +35,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
         }
         this.logger.log(`Session found with identityId: ${session.identityId.getValue}`, context);
 
-        const identity = await this.identityRepository.findById(session.identityId.getValue, {});
+        const identity = await this.identityRepository.findById(session.identityId.getValue);
 
         if (!identity) {
             this.logger.error(`User not found for identityId: ${session.identityId.getValue}`, context);

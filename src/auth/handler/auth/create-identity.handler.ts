@@ -1,15 +1,15 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CommandCreateAuthEvent } from "./events/create-auth.events";
-import { authUserCreatedEvent } from "../events/auth-user-created.event";
 import { FirstName, LastName } from "src/value-objects/name.vo";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
-import { HasherService } from "../services/HasherService.service";
 import { Identity } from "src/core/entities/Identity.entity";
 import { EntityAlreadyExistsException, EntityNotFoundException } from "src/exeption/domain-exeptions";
 import { RoleRepository } from "src/infrastructure/repository/role-repository.service";
+import { HasherService } from "src/auth/services/HasherService.service";
+import { authUserCreatedEvent } from "src/auth/events/auth-user-created.event";
 
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
@@ -32,7 +32,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     const password = new Password(user.password);
     
 
-    const findUser = await this.identityRepository.findByEmail(email.getValue, {});
+    const findUser = await this.identityRepository.findByEmail(email.getValue);
     if (findUser) {
         throw new EntityAlreadyExistsException("User already exist", findUser.identityIdValue);
     }
@@ -46,9 +46,8 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     if(!role){
         throw new EntityNotFoundException("Role", "Default role is not exist!")
     }
-    console.log(role)
+    
     validatedUser.addRoles(role);
-    console.log(validatedUser);
 
     const userCreated = await this.identityRepository.create(validatedUser);
 

@@ -5,13 +5,13 @@ import { ResponseMessage } from "src/decorator/response-matadata.dto";
 import { RawToken } from "./decorator/rawToken.decorator";
 import { AccessJwtGuard } from "./guards/access.guard";
 import { CommandBus } from "@nestjs/cqrs";
-import { CommandCreateAuthEvent } from "./handler/events/create-auth.events";
-import { RefreshTokenEvent } from "./handler/events/refresh-token.event";
-import { LoginEvent } from "./handler/events/login-auth.event";
+import { CommandCreateAuthEvent } from "./handler/auth/events/create-auth.events";
+import { RefreshTokenEvent } from "./handler/auth/events/refresh-token.event";
+import { LoginEvent } from "./handler/auth/events/login-auth.event";
 import { ReqUser } from "./decorator/reqUser.decorator";
 import { ChangePasswordDto } from "src/dto/request/auth/changePassword.dto";
 import { ResponseInterceptor } from "src/interceptor/response.interceptor";
-import { ChangePasswordCommand } from "./handler/events/change-passwrod.event";
+import { ChangePasswordCommand } from "./handler/auth/events/change-passwrod.event";
 
 @Controller('auth')
 export class AuthController {

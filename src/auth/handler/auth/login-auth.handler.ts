@@ -4,12 +4,12 @@ import { LoggerService } from "src/services/logger.service";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
-import { TokenService } from "../services/TokenService.service";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
-import { HasherService } from "../services/HasherService.service";
 import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
 import { AuthenticationException, EntityNotFoundException } from "src/exeption/domain-exeptions";
 import e from "express";
+import { HasherService } from "src/auth/services/HasherService.service";
+import { TokenService } from "src/auth/services/TokenService.service";
 
 @Injectable()
 @CommandHandler(LoginEvent)
@@ -26,10 +26,11 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
     async execute(command: LoginEvent) {
         const { login } = command;
         try {
+            
             const email = new Email(login.email);
             const password = new Password(login.password);
 
-            const findUser = await this.identityRepository.findByEmail(email.getValue, { passwordHash: true });
+            const findUser = await this.identityRepository.findByEmail(email.getValue);
             
             if (!findUser) {
                 this.logger.warn("User not found for email: " + login.email);
