@@ -1,6 +1,6 @@
 import { ICommand, ofType, Saga } from "@nestjs/cqrs";
 import { map, Observable } from "rxjs";
-import { DeleteProfileAndUserEvent } from "src/auth/handler/auth/events/delete-auth.events";
+import { DeleteProfileAndUserEvent } from "src/auth/handler/auth/impl/delete-auth.command";
 import { LoggerService } from "src/services/logger.service";
 import { CreateProfileHandler } from "src/profile/handler/events/createProfile.events";
 import { DeleteProfileEvent } from "src/profile/handler/events/deleteProfile.event";

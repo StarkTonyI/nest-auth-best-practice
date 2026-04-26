@@ -140,7 +140,7 @@ export class IdentityRepository implements iIdentityRepository{
 
         const permissionForm = role.permissions.map((permissionRelation)=>{
         const permission = permissionRelation.permission;       
-            return Permission.formDate({ 
+            return Permission.fromData({ 
                 id: permission.id, 
                 resourceStr: permission.resource, 
                 actionStr: permission.action, 
@@ -164,7 +164,7 @@ export class IdentityRepository implements iIdentityRepository{
     return Identity.formData({ 
         id: record.id,
          email: record.email, 
-         passwordHash:'', 
+         passwordHash:record.passwordHash, 
          createdAt: record.createdAt, 
          updatedAt: record.updatedAt, 
          roles

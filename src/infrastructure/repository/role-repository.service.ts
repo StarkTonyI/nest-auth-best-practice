@@ -1,25 +1,34 @@
 import { Injectable } from "@nestjs/common";
-import { Role as PrismaRole } from "@prisma/client";
+import { Prisma, Role as PrismaRole } from "@prisma/client";
+import { Permission } from "src/core/entities/permission.entity";
 import { Role } from "src/core/entities/role.entity";
 import { PrismaService } from "src/database/dataBase.service";
 
+type UserWithRelations = Prisma.RoleGetPayload<{
+ include: { permissions:{ include: { permission: true } } }
+}>
 @Injectable()
 export class RoleRepository{
     constructor(private readonly prisma: PrismaService){}
 
-  async findById(id: string): Promise<Role | null>{
+    async findByRoleName(name: string): Promise<Role | null>{
         const role = await this.prisma.role.findUnique({
-            where:{
-                id:id
+        where: { name: name },
+            include:{
+                permissions:{
+                    include: {
+                        permission: true
+                    }
+                }
             }
         })
-        if(!role) return null;
-        return this.roleMapper(role)
-    }
+        if(!role) {
+            return null;
+        }
 
-    async updateRole(role: Partial<PrismaRole>){
+        return this.roleMapper(role as UserWithRelations)
+}
 
-    }
 
     async deleteRole(roleId: string): Promise<void>{
         await this.prisma.role.deleteMany({
@@ -40,23 +49,44 @@ export class RoleRepository{
                 updatedAt: role.updatedAt
             }
         })
-        return this.roleMapper(createdRole)
+        return this.roleMapper(createdRole as UserWithRelations)
     }
 
     async findDefaultRole(){
         const findRole = await this.prisma.role.findFirst({
             where:{
                 isDefault: true
+            },
+            include:{
+                permissions:{
+                    include:{
+                        permission:true
+                    }
+                }
             }
         })
         if(!findRole) return null;
-        return this.roleMapper(findRole)
+        return this.roleMapper(findRole as UserWithRelations)
     }
 
 
 
-    roleMapper(role: PrismaRole): Role {
-        return Role.formData(role);
+    roleMapper(role: UserWithRelations): Role {
+        const { id, name, description, isDefault, createdAt, updatedAt } = role;
+        const permissions = role.permissions.map((permissionRelate)=>{
+            const permission = permissionRelate.permission;
+            const { id, description, resource, action, createdAt, updatedAt } = permission;
+            return Permission.fromData({
+                id, description, 
+                resourceStr:  resource, 
+                actionStr: action, 
+                createdAt, 
+                updatedAt
+            })
+        })
+
+        return Role.formData({ id, name, description,isDefault, createdAt, updatedAt }, permissions)
+
     }
 
 }

@@ -27,6 +27,7 @@ export class Role {
     name: string;
     description: string;
     isDefault:boolean;
+    permission?: Permission[];
     createdAt: Date;
     updatedAt:Date;
 
@@ -37,6 +38,25 @@ export class Role {
         this.isDefault = rolePayload.isDefault;
         this.createdAt = rolePayload.createdAt ? rolePayload.createdAt : new Date();
         this.updatedAt = rolePayload.updatedAt ? rolePayload.updatedAt : new Date();
+    }
+
+    addPermission(permission: Permission[]){
+        this.permission = permission;
+    }
+
+
+    static toDetailResponse(role: Role){
+        return {
+            id: role.id.getValue,
+            name: role.name,
+            description: role.description,
+            isDefault: role.isDefault,
+            permission: role.permission ? role.permission.map(i => { 
+                return Permission.toDetailResopnse(i)
+             }) : [],
+            createdAt: role.createdAt,
+            updatedAt: role.updatedAt
+        }
     }
 
     static create(rolePayload: RoleCreateInput){
@@ -50,5 +70,7 @@ export class Role {
         const id = RoleId.fromString(rolePayload.id)
         return new Role({ id, name, description, isDefault, createdAt, updatedAt })
     }
+
+
 
 }

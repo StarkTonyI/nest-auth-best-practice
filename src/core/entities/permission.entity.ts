@@ -28,16 +28,27 @@ export class Permission {
     }
 
 
-    static create(permission: PermissionPayload){
-        const id = permission.id ? permission.id : PermissionId.createId();
-        return new Permission({ ...permission, id })
+    static create(action: string, resource: string, description?: string){
+        const id = PermissionId.createId();
+        const resourceAction = new ActionResource(action, resource);
+        return new Permission({ id, resourceAction, description: description || '' })
     }
 
-    static formDate(permissionStr:{ id: string, description: string, resourceStr: string, 
+    static fromData(permissionStr:{ id: string, description: string, resourceStr: string, 
         actionStr: string, createdAt: Date, updatedAt: Date }): Permission{
         const { id, description, resourceStr, actionStr, createdAt, updatedAt } = permissionStr;
         return new Permission({ id:PermissionId.fromString(id), description, resourceAction: new ActionResource(actionStr, resourceStr),
              createdAt, updatedAt })
+    }
+
+    static toDetailResopnse(permission: Permission){
+        return {
+            id: permission.id.getValue,
+            name: permission.name.name,
+            descriprion: permission.description,
+            createdAt: permission.createdAt,
+            updatedAt: permission.updatedAt
+        }
     }
 
 }

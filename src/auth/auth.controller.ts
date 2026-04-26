@@ -5,13 +5,16 @@ import { ResponseMessage } from "src/decorator/response-matadata.dto";
 import { RawToken } from "./decorator/rawToken.decorator";
 import { AccessJwtGuard } from "./guards/access.guard";
 import { CommandBus } from "@nestjs/cqrs";
-import { CommandCreateAuthEvent } from "./handler/auth/events/create-auth.events";
-import { RefreshTokenEvent } from "./handler/auth/events/refresh-token.event";
-import { LoginEvent } from "./handler/auth/events/login-auth.event";
+import { CommandCreateAuthEvent } from "./handler/auth/impl/create-auth.command";
+import { RefreshTokenEvent } from "./handler/auth/impl/refresh-token.command";
+import { LoginEvent } from "./handler/auth/impl/login-auth.command";
 import { ReqUser } from "./decorator/reqUser.decorator";
 import { ChangePasswordDto } from "src/dto/request/auth/changePassword.dto";
 import { ResponseInterceptor } from "src/interceptor/response.interceptor";
-import { ChangePasswordCommand } from "./handler/auth/events/change-passwrod.event";
+import { ChangePasswordCommand } from "./handler/auth/impl/change-passwrod.command";
+import { RolePayload } from "src/dto/request/auth/rolePassword.dto";
+import { CreateRoleHandler } from "./handler/role/createRole.handler";
+import { CreateRoleCommand } from "./handler/role/impl/createRole.command";
 
 @Controller('auth')
 export class AuthController {
@@ -43,7 +46,6 @@ export class AuthController {
     }
 
 
-    @ResponseMessage("Refresh token successfully")
     @UseGuards(RefreshJwtGuard)
     @ResponseMessage("Tokens updated succesfully")
     @Post('/refresh-token') 
@@ -51,6 +53,17 @@ export class AuthController {
         return this.commandBus.execute(new RefreshTokenEvent(token))
     
     }
+
+    
+    @ResponseMessage("Create role successfully")
+    @UseGuards(RefreshJwtGuard)
+    @Post('/create-role') 
+    async createRole(@Body() rolePayload: RolePayload){
+        return this.commandBus.execute(new CreateRoleCommand(rolePayload.role, rolePayload.description, rolePayload.permissionName ))
+    }
+
+
+
 }
 
 

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { RefreshTokenEvent } from "./events/refresh-token.event";
+import { RefreshTokenEvent } from "./impl/refresh-token.command";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoggerService } from "src/services/logger.service";
 import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";

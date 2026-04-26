@@ -17,6 +17,8 @@ import { RoleRepository } from "src/infrastructure/repository/role-repository.se
 import { CreateCommandHandler } from "./handler/auth/create-identity.handler";
 import { LoginCommandHandler } from "./handler/auth/login-auth.handler";
 import { RefreshTokenCommandHandler } from "./handler/auth/session.handler";
+import { CreateRoleHandler } from "./handler/role/createRole.handler";
+import { PermissionRepository } from "src/infrastructure/repository/permission-repository.service";
 @Module({
     imports: [
         CqrsModule,
@@ -35,7 +37,7 @@ import { RefreshTokenCommandHandler } from "./handler/auth/session.handler";
     ],
     controllers: [AuthController],
     providers: [
-        CreateCommandHandler, 
+        CreateCommandHandler, CreateRoleHandler,
         LoginCommandHandler, RefreshTokenCommandHandler, HasherService, TokenService,
         {
             provide: 'iIdentityRepository',
@@ -48,7 +50,7 @@ import { RefreshTokenCommandHandler } from "./handler/auth/session.handler";
         {
             provide: 'iProfileRepository',
             useClass: ProfileRepository
-        }, RoleRepository,
+        }, RoleRepository, PermissionRepository,
         AccessJwtGuard, 
         RefreshJwtGuard
     ], exports: ['iIdentityRepository','iSessionRepository','iProfileRepository']

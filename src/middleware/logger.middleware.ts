@@ -1,15 +1,14 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiConfigServices } from 'src/configService/apiConfig.service';
 import { LoggerService } from 'src/services/logger.service';
 
 const REDACT_KEYS = [/pass/i, /token/i, /auth/i, /secret/i, /^email$/i, /code/i];
 const SKIP_PATHS = new Set<string>(['/', '/health', '/metrics', '/favicon.ico']);
 const SKIP_METHODS = new Set<string>(['OPTIONS', 'HEAD']);
-const LOGGER_METHODS = ['PUT','POST',  'PATCH', 'GET']
+const LOGGER_METHODS = ['PUT','POST',  'PATCH', 'GET'];
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private readonly loggerService: LoggerService, private readonly config: ApiConfigServices) { }
+  constructor(private readonly loggerService: LoggerService) { }
 
   use(req: any, res: Response, next: (error?: any) => void) {
     const method:string = req.method;
@@ -58,6 +57,7 @@ export class LoggerMiddleware implements NestMiddleware {
         }
       }
       const payload = { baseLog, body:  redactObject }
+    /*
       if (isServerError) {
           this.loggerService.err(payload, { module: 'HTTP', method });
         } else if (isClientError || isSlow) {
@@ -65,22 +65,20 @@ export class LoggerMiddleware implements NestMiddleware {
         } else {
           this.loggerService.logger(payload, { module: 'HTTP', method });
         }
-
-
+*/
     }
     else {
        if(isServerError){  
-          this.loggerService.err(baseLog, { module: 'HTTP', method });
+          //this.loggerService.err(baseLog, { module: 'HTTP', method });
         } else if (isClientError || isSlow) {
-          this.loggerService.warning(baseLog, { module: 'HTTP', method });
+          //this.loggerService.warning(baseLog, { module: 'HTTP', method });
         } else {
-          this.loggerService.logger(baseLog, { module: 'HTTP', method });
+          //this.loggerService.logger(baseLog, { module: 'HTTP', method });
         }
       }
-  })
-
-
+  });
     next()
-  }
- 
-}
+}}
+
+
+

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { CommandCreateAuthEvent } from "./events/create-auth.events";
+import { CommandCreateAuthEvent } from "./impl/create-auth.command";
 import { FirstName, LastName } from "src/value-objects/name.vo";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
@@ -42,6 +42,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     const validatedUser = Identity.create(email, hash);
 
     const role = await this.roleRepository.findDefaultRole();
+    console.log(role)
 
     if(!role){
         throw new EntityNotFoundException("Role", "Default role is not exist!")
@@ -58,5 +59,11 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     await this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
 
     return userCreated;
-}
-}
+
+}}
+
+
+
+
+
+

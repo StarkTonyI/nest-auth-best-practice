@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { DeleteProfileAndUserEvent } from "./events/delete-auth.events";
+import { DeleteProfileAndUserEvent } from "./impl/delete-auth.command";
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { type iProfileRepository } from "src/interfaces/repository/profile-repository";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";

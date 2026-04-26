@@ -19,7 +19,7 @@ export class DomainException extends HttpException {
 
 // Entity not found
 export class EntityNotFoundException extends DomainException {
-  constructor(entityName: string, details: DeatilsStringMix) {
+  constructor(entityName: string, details?: DeatilsStringMix) {
     const message = `${entityName} not found`;
     super(message, HttpStatus.NOT_FOUND, details);
   }
@@ -27,7 +27,7 @@ export class EntityNotFoundException extends DomainException {
 
 // Entity already exists
 export class EntityAlreadyExistsException extends DomainException {
-  constructor(entityName: string, details: DeatilsStringMix) {
+  constructor(entityName: string, details?: DeatilsStringMix) {
     const message = `${entityName} already exist`
     super(message, HttpStatus.CONFLICT, details);
   }
