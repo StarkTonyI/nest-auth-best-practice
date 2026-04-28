@@ -59,7 +59,12 @@ export class AuthController {
     @UseGuards(RefreshJwtGuard)
     @Post('/create-role') 
     async createRole(@Body() rolePayload: RolePayload){
-        return this.commandBus.execute(new CreateRoleCommand(rolePayload.role, rolePayload.description, rolePayload.permissionName ))
+        return this.commandBus.execute(new CreateRoleCommand(
+            rolePayload.role, 
+            rolePayload.description, 
+            rolePayload.permissionName, 
+            rolePayload.isDefault 
+        ))
     }
 
 

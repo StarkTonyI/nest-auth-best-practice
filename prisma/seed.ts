@@ -145,7 +145,6 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const start = performance.now();
-  console.log('Seeding database...');
 
   const adminPasswordHash = await hashPassword(adminUser.password);
 

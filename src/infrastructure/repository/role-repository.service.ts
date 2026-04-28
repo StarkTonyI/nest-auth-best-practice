@@ -25,10 +25,8 @@ export class RoleRepository{
         if(!role) {
             return null;
         }
-
         return this.roleMapper(role as UserWithRelations)
 }
-
 
     async deleteRole(roleId: string): Promise<void>{
         await this.prisma.role.deleteMany({
@@ -68,11 +66,21 @@ export class RoleRepository{
         if(!findRole) return null;
         return this.roleMapper(findRole as UserWithRelations)
     }
-
-
+    
+    async updateRole(role: Role){
+        await this.prisma.role.update({
+            where: {
+                id: role.id.getValue
+            }, data: {
+                updatedAt: role.updatedAt
+            }
+        })
+    }
 
     roleMapper(role: UserWithRelations): Role {
         const { id, name, description, isDefault, createdAt, updatedAt } = role;
+
+        console.log(role.permissions)
         const permissions = role.permissions.map((permissionRelate)=>{
             const permission = permissionRelate.permission;
             const { id, description, resource, action, createdAt, updatedAt } = permission;
@@ -84,6 +92,8 @@ export class RoleRepository{
                 updatedAt
             })
         })
+
+        console.log(permissions)
 
         return Role.formData({ id, name, description,isDefault, createdAt, updatedAt }, permissions)
 

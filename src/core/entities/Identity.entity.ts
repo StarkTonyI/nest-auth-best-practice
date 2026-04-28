@@ -4,7 +4,6 @@ import { Profile } from "./profile.entity";
 import { Session } from "./session.entity";
 import { FirstName, LastName } from "src/value-objects/name.vo";
 import { Role } from "./role.entity";
-import { Identity as PrismaIdentity } from "@prisma/client"
 interface IdentityProps {
    id: UserId;
    email: Email;
@@ -40,15 +39,15 @@ export class Identity {
         this.role = props.role;
     }
 
-    get userEmail(){
+    get getEmail(){
         return this.email;
     }
 
-    get userEmailValue(){
+    get getEmailValue(){
         return this.email.getValue;
     }
 
-    get userPasswordHash(){
+    get getPasswordHash(){
         return this.passwordHash;
     }
 
@@ -59,11 +58,11 @@ export class Identity {
         };
     }
 
-    get identityId(){
+    get getId(){
         return this.id;
     }
 
-    get identityIdValue(){
+    get getIdValue(){
         return this.id.getValue
     }
 
@@ -101,4 +100,16 @@ export class Identity {
         const email = new Email(data.email);
         return new Identity({...data, email, id, role: data.roles})
     }
+
+    static toDetailResponse(identity: Identity){
+        return {
+            id: identity.id.getValue,
+            email: identity.getEmail.getValue,
+            createdAt: identity.createdAt,
+            updatedAt: identity.updatedAt,
+            profile: identity.getProfile ? Profile.toDetailResponse(identity.getProfile) : {},
+            role: identity.getRoles ? identity.getRoles.map(i => Role.toDetailResponse(i) ) : {}
+        }
+    }
+
 }

@@ -20,8 +20,8 @@ export class IdentityRepository implements iIdentityRepository{
         try {
             const userCreated = await this.prisma.identity.create({
                 data: { 
-                    email: identity.userEmail.getValue,
-                    passwordHash: identity.userPasswordHash, 
+                    email: identity.getEmailValue,
+                    passwordHash: identity.getPasswordHash, 
                     roles: {
                         create: identity.getRoles.map((role)=>({
                             role: {
@@ -130,10 +130,6 @@ export class IdentityRepository implements iIdentityRepository{
     }   
 
     mapToModel(record: UserWithRelations): Identity{
-       
-        console.log(record.roles)
-        console.log(record.roles[0].role)
-
 
         const roles = record.roles.map((roleRelation, index) => {
         const role = roleRelation.role;

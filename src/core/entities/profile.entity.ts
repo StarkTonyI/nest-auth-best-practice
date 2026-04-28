@@ -42,14 +42,13 @@ export class Profile {
         this.updatedAt = props.updatedAt || new Date()
     }
 
-static create(createPayload: createPayload){
-    const userName = new UserName();
-    const { firstName, lastName, identityId } = createPayload;
-    return new Profile({ userName, firstName, lastName, identityId })
+    static create(createPayload: createPayload){
+        const userName = new UserName();
+        const { firstName, lastName, identityId } = createPayload;
+        return new Profile({ userName, firstName, lastName, identityId })
+    }
 
-}
-
-static formData(createdPayload = { idStr: '', userNameStr:'', firstNameStr:'', lastNameStr: '', identityId: '', 
+    static formData(createdPayload = { idStr: '', userNameStr:'', firstNameStr:'', lastNameStr: '', identityId: '', 
     createdAt:new Date(), updatedAt: new Date(), avatarUrl:'', bio: ''  }){
         const id = UserId.fromString(createdPayload.idStr);
         const userName = new UserName(createdPayload.userNameStr);
@@ -61,4 +60,17 @@ static formData(createdPayload = { idStr: '', userNameStr:'', firstNameStr:'', l
         id, userName, firstName, lastName, identityId,
         createdAt, updatedAt, avatarUrl, bio})
     }
+
+    static toDetailResponse(profile: Profile){
+        return {
+            id: profile.id.getValue,
+            userName: profile.userName.getValue,
+            firstName: profile.firstName.getValue,
+            lastName: profile.lastName.getValue,
+            avatarUrl: profile.avatarUrl,
+            createdAt: profile.createdAt,
+            updatedAt: profile.updatedAt
+        }
+    }
+
 }

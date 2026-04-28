@@ -36,15 +36,12 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
                 throw new EntityNotFoundException("User", email.getValue);
             }
 
-            console.log(password.getValue);
-            console.log(findUser.userPasswordHash)
-
-            const passwordCompare = await this.passwordHash.compare(password.getValue, findUser.userPasswordHash);
+            const passwordCompare = await this.passwordHash.compare(password.getValue, findUser.getPasswordHash);
             
             if (!passwordCompare) {
                 throw new AuthenticationException("Incorrect password", '');
             }
-            const { access_token, refresh_token, expiresIn } = await this.tokenService.generatedTokens(findUser.identityId, findUser.userEmail);
+            const { access_token, refresh_token, expiresIn } = await this.tokenService.generatedTokens(findUser.getId, findUser.getEmail);
             
             const hashedToken = await this.passwordHash.hashToken(refresh_token)
             const session = findUser.createNewSession(hashedToken, expiresIn);
@@ -54,7 +51,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
 
             
             return {
-                id: findUser.identityIdValue,
+                id: findUser.getIdValue,
                 access_token,
                 refresh_token,
             };

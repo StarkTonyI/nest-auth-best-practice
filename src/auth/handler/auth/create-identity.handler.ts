@@ -34,7 +34,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
 
     const findUser = await this.identityRepository.findByEmail(email.getValue);
     if (findUser) {
-        throw new EntityAlreadyExistsException("User already exist", findUser.identityIdValue);
+        throw new EntityAlreadyExistsException("User already exist", findUser.getIdValue);
     }
 
     const hash = await this.passwordHash.hash(password.getValue);
@@ -42,6 +42,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     const validatedUser = Identity.create(email, hash);
 
     const role = await this.roleRepository.findDefaultRole();
+
     console.log(role)
 
     if(!role){
@@ -58,7 +59,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
         
     await this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
 
-    return userCreated;
+    return Identity.toDetailResponse(userCreated);
 
 }}
 

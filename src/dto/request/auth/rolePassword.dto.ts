@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 export class RolePayload {
     @IsString()
@@ -7,4 +7,6 @@ export class RolePayload {
     description!: string;
     @IsString()
     permissionName!: string;
+    @IsBoolean()
+    isDefault!: boolean
 }

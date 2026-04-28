@@ -42,13 +42,13 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
             throw new EntityNotFoundException("User", session.identityId.getValue);
         }
 
-        this.logger.log(`User found: ${identity.userEmail}`, context);
+        this.logger.log(`User found: ${identity.getEmailValue}`, context);
 
-        const { access_token, refresh_token } = await this.tokenService.generatedTokens(identity.identityId, identity.userEmail);
+        const { access_token, refresh_token } = await this.tokenService.generatedTokens(identity.getId, identity.getEmail);
         this.logger.log("Tokens generated successfully", context);
 
         const hashedToken = await this.hasherService.hashToken(refresh_token);
-        const sessoinEntity = new Session({ hashedToken, identityId: identity.identityId });
+        const sessoinEntity = new Session({ hashedToken, identityId: identity.getId });
 
         await this.sessoinRepository.deleteSessionById(session.getIdentityId)
         await this.sessoinRepository.createSession(sessoinEntity);
