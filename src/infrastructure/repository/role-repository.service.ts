@@ -79,7 +79,7 @@ export class RoleRepository{
     }
 
     async assignPermission(role: Role, permission: Permission){
-        await this.prisma.rolePermission.create({
+        return await this.prisma.rolePermission.create({
             data:{
                 roleId: role.id.value,
                 permissionId: permission.id.value

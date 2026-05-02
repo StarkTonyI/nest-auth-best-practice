@@ -29,8 +29,8 @@ export class PermissionRepository {
         return this.mapToModel(findPermission);
     }
 
-    async create(permission: Permission){
-        await this.prisma.permission.create({
+    async create(permission: Permission): Promise<Permission>{
+        const permissionCreated = await this.prisma.permission.create({
             data: {
                 id: permission.id.value,
                 resource: permission.resourceAction.resource,
@@ -39,6 +39,7 @@ export class PermissionRepository {
                 description: permission.description,
             }
         })
+        return this.mapToModel(permissionCreated)
     }
 
     mapToModel(permission: PrismaPermission): Permission{

@@ -8,7 +8,9 @@ import { PermissionRepository } from "src/infrastructure/repository/permission-r
 
 @CommandHandler(AssingPermissionCommand)
 export class AssingPermissionHandler implements ICommandHandler<AssingPermissionCommand>{
-    constructor(private readonly roleRepository: RoleRepository, private readonly permissionRepository: PermissionRepository){}
+    constructor(
+        private readonly roleRepository: RoleRepository, 
+        private readonly permissionRepository: PermissionRepository){}
     async execute(command: AssingPermissionCommand): Promise<any> {
         const { role, action, resource } = command;
 
@@ -16,11 +18,11 @@ export class AssingPermissionHandler implements ICommandHandler<AssingPermission
         if(!findRole){
             throw new EntityNotFoundException("role")
         }
-        const createPermission = Permission.create(action, resource, '');
+        const permission = Permission.create(action, resource, '');
 
-        await this.permissionRepository
-        await this.roleRepository.assignPermission(findRole, createPermission)
-        return Promise.resolve()
+        const createdPermission = await this.permissionRepository.create(permission);
+        return await this.roleRepository.assignPermission(findRole, createdPermission);
+        
     }
 }
 

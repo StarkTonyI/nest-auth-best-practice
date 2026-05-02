@@ -19,6 +19,7 @@ import { LoginCommandHandler } from "./handler/auth/login-auth.handler";
 import { RefreshTokenCommandHandler } from "./handler/auth/session.handler";
 import { CreateRoleHandler } from "./handler/role/createRole.handler";
 import { PermissionRepository } from "src/infrastructure/repository/permission-repository.service";
+import { AssingPermissionHandler } from "./handler/role/assign-permission.handler";
 @Module({
     imports: [
         CqrsModule,
@@ -37,7 +38,7 @@ import { PermissionRepository } from "src/infrastructure/repository/permission-r
     ],
     controllers: [AuthController],
     providers: [
-        CreateCommandHandler, CreateRoleHandler,
+        CreateCommandHandler, CreateRoleHandler, AssingPermissionHandler,
         LoginCommandHandler, RefreshTokenCommandHandler, HasherService, TokenService,
         {
             provide: 'iIdentityRepository',

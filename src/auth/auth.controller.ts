@@ -71,7 +71,7 @@ export class AuthController {
 
     @ResponseMessage("Assign permission to role successfully")
     @UseGuards(RefreshJwtGuard)
-    @Post('/create-role') 
+    @Post('/assign-permission') 
     async assignPermission(@Body() permissionPayload: AssingPermissionPayload){
         return this.commandBus.execute(new AssingPermissionCommand(
             permissionPayload.role, 
