@@ -15,6 +15,8 @@ import { ChangePasswordCommand } from "./handler/auth/impl/change-passwrod.comma
 import { RolePayload } from "src/dto/request/auth/rolePassword.dto";
 import { CreateRoleHandler } from "./handler/role/createRole.handler";
 import { CreateRoleCommand } from "./handler/role/impl/createRole.command";
+import { AssingPermissionCommand } from "./handler/role/impl/assign-permission.command";
+import { AssingPermissionPayload } from "src/dto/request/auth/assignPermission.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -67,7 +69,16 @@ export class AuthController {
         ))
     }
 
-
+    @ResponseMessage("Assign permission to role successfully")
+    @UseGuards(RefreshJwtGuard)
+    @Post('/create-role') 
+    async assignPermission(@Body() permissionPayload: AssingPermissionPayload){
+        return this.commandBus.execute(new AssingPermissionCommand(
+            permissionPayload.role, 
+            permissionPayload.action,
+            permissionPayload.resource
+        ))
+    }
 
 }
 

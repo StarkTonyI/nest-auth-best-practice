@@ -25,7 +25,7 @@ export class IdentityRepository implements iIdentityRepository{
                     roles: {
                         create: identity.getRoles.map((role)=>({
                             role: {
-                                connect: { id:role.id.getValue }     
+                                connect: { id:role.id.value }     
                             }
                         }))
                     }

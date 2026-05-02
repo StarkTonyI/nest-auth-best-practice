@@ -13,7 +13,6 @@ import { authUserCreatedEvent } from "src/auth/events/auth-user-created.event";
 
 @Injectable()
 @CommandHandler(CommandCreateAuthEvent)
-
 export class CreateCommandHandler implements ICommandHandler<CommandCreateAuthEvent> {
     constructor(
         private readonly eventBus: EventBus,
@@ -32,25 +31,19 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     const password = new Password(user.password);
     
 
-    const findUser = await this.identityRepository.findByEmail(email.getValue);
+    const findUser = await this.identityRepository.findByEmail(email.value);
     if (findUser) {
         throw new EntityAlreadyExistsException("User already exist", findUser.getIdValue);
     }
-
-    const hash = await this.passwordHash.hash(password.getValue);
-
+    const hash = await this.passwordHash.hash(password.value);
     const validatedUser = Identity.create(email, hash);
-
     const role = await this.roleRepository.findDefaultRole();
-
-    console.log(role)
 
     if(!role){
         throw new EntityNotFoundException("Role", "Default role is not exist!")
     }
     
     validatedUser.addRoles(role);
-
     const userCreated = await this.identityRepository.create(validatedUser);
 
     userCreated.createNewProfile(firstName, lastName);
@@ -60,8 +53,9 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
     await this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
 
     return Identity.toDetailResponse(userCreated);
-
 }}
+
+
 
 
 

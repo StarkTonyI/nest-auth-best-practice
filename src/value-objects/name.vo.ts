@@ -2,12 +2,12 @@ import { randomBytes } from "crypto";
 import { InvalidInputException } from "src/exeption/domain-exeptions";
 
 export class Name {
-    private readonly value: string
+    private readonly _value: string
     constructor(value: string){
         if(!this.isValid(value)){
             throw new InvalidInputException(`Incorrect ${this.constructor.name}`)
         }
-        this.value = this.formatName(value);
+        this._value = this.formatName(value);
     }
 
     private isValid(value: string): boolean{
@@ -18,12 +18,12 @@ export class Name {
         return value.trim()
     }
 
-    getValue():string{
-        return this.value;
+    get value():string{
+        return this._value;
     }
 
     equals(value: string): boolean{
-        return value.trim() === this.getValue()
+        return value.trim() === this.value
     }
 }
 
@@ -50,21 +50,21 @@ export class LastName extends Name {
 }
 
 export class FullName {
-    private readonly firstName: FirstName;
-    private readonly lastName: LastName;
+    private readonly _firstName: FirstName;
+    private readonly _lastName: LastName;
     constructor(firstName: FirstName, lastName: LastName){
-        this.firstName = firstName,
-        this.lastName = lastName
+        this._firstName = firstName,
+        this._lastName = lastName
     }
-    getFirstName(): FirstName{
-        return this.firstName;
+    get firstName(): FirstName{
+        return this._firstName;
     }
 
-    getLastName(): LastName{
-        return this.lastName;
+    get lastName(): LastName{
+        return this._lastName;
     }
 
     getFullName(): string{
-        return `${this.firstName.getValue()} ${this.lastName.getValue()}`
+        return `${this.firstName.value} ${this.lastName.value}`
     }
 }

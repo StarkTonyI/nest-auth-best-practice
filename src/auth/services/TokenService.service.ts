@@ -12,8 +12,8 @@ export class TokenService {
 
     buildPayload(userId: UserId, email: Email){
         const payload = {
-            userId: userId.getValue,
-            email: email.getValue,
+            userId: userId.value,
+            email: email.value,
         }
         return payload
     }

@@ -51,7 +51,7 @@ export class SessionRepository implements iSessionRepository{
             data:{
                 id: session.id,
                 hashedToken: session.hashedToken,
-                identityId: session.identityId.getValue,
+                identityId: session.identityId.value,
                 expiresAt: session.expiresAt,
                 createdAt: session.createdAt,
             }

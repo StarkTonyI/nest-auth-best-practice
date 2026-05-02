@@ -11,20 +11,45 @@ interface PermissionPayload {
 }
 
 export class Permission {
-    id: PermissionId;
-    name: PermissionName;
-    description: string;
-    resourceAction: ActionResource;
-    createdAt: Date;
-    updatedAt: Date;
+    _id: PermissionId;
+    _name: PermissionName;
+    _description: string;
+    _resourceAction: ActionResource;
+    _createdAt: Date;
+    _updatedAt: Date;
 
     constructor(permission: PermissionPayload){
-        this.id = permission.id;
-        this.name = PermissionName.create(permission.resourceAction.getAction, permission.resourceAction.getResource);
-        this.description = permission.description;
-        this.resourceAction = permission.resourceAction;
-        this.createdAt = permission.createdAt ? permission.createdAt : new Date();
-        this.updatedAt = permission.updatedAt ? permission.updatedAt : new Date();
+        this._id = permission.id;
+        this._name = PermissionName.create(permission.resourceAction.action, permission.resourceAction.resource);
+        this._description = permission.description;
+        this._resourceAction = permission.resourceAction;
+        this._createdAt = permission.createdAt ? permission.createdAt : new Date();
+        this._updatedAt = permission.updatedAt ? permission.updatedAt : new Date();
+    }
+
+
+    get id(){
+        return this._id
+    }
+
+    get name(){
+        return this._name
+    }
+
+    get description(){
+        return this._description
+    }
+
+    get resourceAction(){
+        return this._resourceAction
+    }
+
+    get createdAt(){
+        return this._createdAt
+    }
+
+    get updatedAt(){
+        return this._updatedAt
     }
 
 
@@ -43,7 +68,7 @@ export class Permission {
 
     static toDetailResopnse(permission: Permission){
         return {
-            id: permission.id.getValue,
+            id: permission.id.value,
             name: permission.name.name,
             descriprion: permission.description,
             createdAt: permission.createdAt,

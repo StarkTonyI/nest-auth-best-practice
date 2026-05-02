@@ -2,16 +2,16 @@ import { InvalidInputException } from 'src/exeption/domain-exeptions';
 import { v4 as uuidv4 } from 'uuid';
 
 export abstract class EntityId {
-    public value: string
+    public _value: string
     constructor(value:string){
         if(!value && value.trim().length < 12){
             throw new InvalidInputException(`${this.constructor.name} cannot have such id!` )
         }
-        this.value = value
+        this._value = value
     }
 
-    get getValue(): string{
-        return this.value;
+    get value(): string{
+        return this._value;
     }
 
     equals(otherId: string): boolean{

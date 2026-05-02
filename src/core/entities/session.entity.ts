@@ -38,7 +38,7 @@ export class Session {
     }
 
     get getIdentityId() {
-      return this.identityId.getValue
+      return this.identityId.value
     }
 
     get gethashedToken(){

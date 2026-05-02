@@ -42,7 +42,7 @@ export class Role {
     }
 
     addPermission(permission: Permission[]){
-        this.permission = permission;
+        this.permission = (this.permission  || []).concat(permission);
     }
 
     removeDefault(){
@@ -68,7 +68,7 @@ export class Role {
 
     static toDetailResponse(role: Role){
         return {
-            id: role.id.getValue,
+            id: role.id.value,
             name: role.name,
             description: role.description,
             isDefault: role.isDefault,

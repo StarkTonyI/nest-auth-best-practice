@@ -33,19 +33,15 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
         if (!session) {
             throw new EntityNotFoundException("Session", refreshToken);
         }
-        this.logger.log(`Session found with identityId: ${session.identityId.getValue}`, context);
 
-        const identity = await this.identityRepository.findById(session.identityId.getValue);
+        const identity = await this.identityRepository.findById(session.identityId.value);
 
         if (!identity) {
-            this.logger.error(`User not found for identityId: ${session.identityId.getValue}`, context);
-            throw new EntityNotFoundException("User", session.identityId.getValue);
+            this.logger.error(`User not found for identityId: ${session.identityId.value}`, context);
+            throw new EntityNotFoundException("User", session.identityId.value);
         }
 
-        this.logger.log(`User found: ${identity.getEmailValue}`, context);
-
         const { access_token, refresh_token } = await this.tokenService.generatedTokens(identity.getId, identity.getEmail);
-        this.logger.log("Tokens generated successfully", context);
 
         const hashedToken = await this.hasherService.hashToken(refresh_token);
         const sessoinEntity = new Session({ hashedToken, identityId: identity.getId });
@@ -53,9 +49,11 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenE
         await this.sessoinRepository.deleteSessionById(session.getIdentityId)
         await this.sessoinRepository.createSession(sessoinEntity);
     
-
-        this.logger.log("Session saved successfully", context);
         return { access_token, refresh_token };
     }
 }
+
+
+
+
 

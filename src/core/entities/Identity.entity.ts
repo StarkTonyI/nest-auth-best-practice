@@ -44,7 +44,7 @@ export class Identity {
     }
 
     get getEmailValue(){
-        return this.email.getValue;
+        return this.email.value;
     }
 
     get getPasswordHash(){
@@ -63,7 +63,7 @@ export class Identity {
     }
 
     get getIdValue(){
-        return this.id.getValue
+        return this.id.value
     }
 
     get getProfile(){
@@ -103,8 +103,8 @@ export class Identity {
 
     static toDetailResponse(identity: Identity){
         return {
-            id: identity.id.getValue,
-            email: identity.getEmail.getValue,
+            id: identity.id.value,
+            email: identity.getEmail.value,
             createdAt: identity.createdAt,
             updatedAt: identity.updatedAt,
             profile: identity.getProfile ? Profile.toDetailResponse(identity.getProfile) : {},

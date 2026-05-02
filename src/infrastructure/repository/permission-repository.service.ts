@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Permission as PrismaPermission } from "@prisma/client";
 import { Permission } from "src/core/entities/permission.entity";
 import { PrismaService } from "src/database/dataBase.service";
+import { ThrottlingException } from "src/exeption/domain-exeptions";
 
 @Injectable()
 export class PermissionRepository {
@@ -26,6 +27,18 @@ export class PermissionRepository {
         })
         if(!findPermission) return null;
         return this.mapToModel(findPermission);
+    }
+
+    async create(permission: Permission){
+        await this.prisma.permission.create({
+            data: {
+                id: permission.id.value,
+                resource: permission.resourceAction.resource,
+                action: permission.resourceAction.action,
+                name: permission.name.name,
+                description: permission.description,
+            }
+        })
     }
 
     mapToModel(permission: PrismaPermission): Permission{

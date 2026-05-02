@@ -1,12 +1,12 @@
 import { InvalidInputException } from "src/exeption/domain-exeptions";
 
 export class Password {
-    private readonly password: string
+    private readonly _password: string
     constructor(password: string){
         if(!this.isValid(password)) {
             throw new InvalidInputException("Password wrong")
         }
-        this.password = password;
+        this._password = password;
     }
   private isValid(password: string): boolean {
     // The Password must be at least 8 characters long and include at least one uppercase letter,
@@ -17,8 +17,8 @@ export class Password {
     return passwordRegex.test(password);
   }
 
-  get getValue(): string{
-    return this.password;
+  get value(): string{
+    return this._password;
   }
 
 

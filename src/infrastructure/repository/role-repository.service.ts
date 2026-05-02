@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, Role as PrismaRole } from "@prisma/client";
+import { permission } from "process";
 import { Permission } from "src/core/entities/permission.entity";
 import { Role } from "src/core/entities/role.entity";
 import { PrismaService } from "src/database/dataBase.service";
@@ -39,7 +40,7 @@ export class RoleRepository{
     async createRole(role: Role):Promise<Role>{
         const createdRole = await this.prisma.role.create({
             data:{
-                id: role.id.getValue,
+                id: role.id.value,
                 name: role.name,
                 description: role.description,
                 isDefault: role.isDefault,
@@ -70,9 +71,18 @@ export class RoleRepository{
     async updateRole(role: Role){
         await this.prisma.role.update({
             where: {
-                id: role.id.getValue
+                id: role.id.value
             }, data: {
                 updatedAt: role.updatedAt
+            }
+        })
+    }
+
+    async assignPermission(role: Role, permission: Permission){
+        await this.prisma.rolePermission.create({
+            data:{
+                roleId: role.id.value,
+                permissionId: permission.id.value
             }
         })
     }

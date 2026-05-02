@@ -30,13 +30,13 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
             const email = new Email(login.email);
             const password = new Password(login.password);
 
-            const findUser = await this.identityRepository.findByEmail(email.getValue);
+            const findUser = await this.identityRepository.findByEmail(email.value);
             
             if (!findUser) {
-                throw new EntityNotFoundException("User", email.getValue);
+                throw new EntityNotFoundException("User", email.value);
             }
 
-            const passwordCompare = await this.passwordHash.compare(password.getValue, findUser.getPasswordHash);
+            const passwordCompare = await this.passwordHash.compare(password.value, findUser.getPasswordHash);
             
             if (!passwordCompare) {
                 throw new AuthenticationException("Incorrect password", '');
@@ -46,7 +46,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
             const hashedToken = await this.passwordHash.hashToken(refresh_token)
             const session = findUser.createNewSession(hashedToken, expiresIn);
             
-            await this.sessoinRepository.deleteSessionById(session.identityId.getValue)
+            await this.sessoinRepository.deleteSessionById(session.identityId.value)
             await this.sessoinRepository.createSession(session);
 
             
@@ -55,6 +55,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
                 access_token,
                 refresh_token,
             };
+            
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             this.logger.error("Login failed: " + message);

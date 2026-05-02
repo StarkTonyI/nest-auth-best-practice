@@ -25,13 +25,13 @@ export class DeleteAuthHandler implements ICommandHandler<DeleteProfileAndUserEv
 
         if(!authId) throw new Error('Incorrect data');
 
-        const userExist = this.authRepo.findById(authId.getValue)
+        const userExist = this.authRepo.findById(authId.value)
         if(!userExist){
-            throw new EntityNotFoundException('User!', authId.getValue)
+            throw new EntityNotFoundException('User!', authId.value)
         }
         try {
-            await this.authRepo.delete(authId.getValue);
-            await this.profileRepo.delete(authId.getValue)
+            await this.authRepo.delete(authId.value);
+            await this.profileRepo.delete(authId.value)
 
         } catch(err){
             this.logger.warn(`Cant delete profile and user with authId: ${authId}`)

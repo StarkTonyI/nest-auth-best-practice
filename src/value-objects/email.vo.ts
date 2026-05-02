@@ -1,12 +1,12 @@
 import { InvalidInputException } from "src/exeption/domain-exeptions";
 
 export class Email {
-    private readonly email: string;
+    private readonly _email: string;
     constructor(email: string){
         if(!this.isValid(email)){
             throw new InvalidInputException("Email form incorrect")
         }
-        this.email = email;
+        this._email = email;
     }
 
     private isValid(email: string): boolean {
@@ -16,10 +16,10 @@ export class Email {
     return emailRegex.test(email);
   }
 
-  get getValue():string {
-    return this.email;
+  get value():string {
+    return this._email;
   }
   equals(value: string): boolean{
-    return this.email === value
+    return this._email === value
   }
 }

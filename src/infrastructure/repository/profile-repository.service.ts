@@ -13,8 +13,8 @@ export class ProfileRepository implements iProfileRepository{
 
         try{
             return await this.prisma.profile.create({data: { 
-                userName: userName.getValue(), lastName: lastName.getValue(), 
-                firstName: firstName.getValue(), identityId: authId.getValue, 
+                userName: userName.value, lastName: lastName.value, 
+                firstName: firstName.value, identityId: authId.value, 
                 bio: '', avatarUrl: ''
             } })
         } catch (e) {

@@ -63,10 +63,10 @@ export class Profile {
 
     static toDetailResponse(profile: Profile){
         return {
-            id: profile.id.getValue,
-            userName: profile.userName.getValue,
-            firstName: profile.firstName.getValue,
-            lastName: profile.lastName.getValue,
+            id: profile.id.value,
+            userName: profile.userName.value,
+            firstName: profile.firstName.value,
+            lastName: profile.lastName.value,
             avatarUrl: profile.avatarUrl,
             createdAt: profile.createdAt,
             updatedAt: profile.updatedAt

@@ -22,14 +22,14 @@ export enum DefaultRoles {
 
 
 export class ActionResource {
-    private action: SeedActionType;
-    private resource: SeedResourceType;
+    private _action: SeedActionType;
+    private _resource: SeedResourceType;
     constructor(action: SeedActionType | string, resource: SeedResourceType | string){
       const actionType = typeof action === 'string' ? this.parseAction(action) : action;
       const resourceType = typeof resource === 'string' ? this.parseResource(resource) : resource;
 
-      this.action = actionType;
-      this.resource = resourceType;
+      this._action = actionType;
+      this._resource = resourceType;
       
     }
 
@@ -47,11 +47,11 @@ export class ActionResource {
         throw new InvalidInputException("Resource type is impossible")
     }
 
-    get getAction(){
-      return this.action;
+    get action(){
+      return this._action;
     }
 
-    get getResource(){
-      return this.resource;
+    get resource(){
+      return this._resource;
     }
 }
