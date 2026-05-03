@@ -20,27 +20,64 @@ interface createPayload {
 }
 
 export class Profile {
-    id: UserId;
-    userName: UserName;
-    firstName: FirstName;
-    lastName: LastName;
-    avatarUrl: string;
-    bio: string;
-    identityId: UserId;
-    createdAt: Date;
-    updatedAt: Date
+    _id: UserId;
+    _userName: UserName;
+    _firstName: FirstName;
+    _lastName: LastName;
+    _avatarUrl: string;
+    _bio: string;
+    _identityId: UserId;
+    _createdAt: Date;
+    _updatedAt: Date
 
     constructor(props: ProfileProps){
-        this.id = props.id || UserId.create(),
-        this.userName = props.userName,
-        this.firstName = props.firstName,
-        this.lastName = props.lastName,
-        this.avatarUrl = props.avatarUrl || '',
-        this.bio = props.bio || '',
-        this.identityId = props.identityId,
-        this.createdAt = props.createdAt || new Date()
-        this.updatedAt = props.updatedAt || new Date()
+        this._id = props.id || UserId.create(),
+        this._userName = props.userName,
+        this._firstName = props.firstName,
+        this._lastName = props.lastName,
+        this._avatarUrl = props.avatarUrl || '',
+        this._bio = props.bio || '',
+        this._identityId = props.identityId,
+        this._createdAt = props.createdAt || new Date()
+        this._updatedAt = props.updatedAt || new Date()
     }
+
+    get id(){
+        return this._id
+    }
+
+    get userName(){
+        return this._userName
+    }
+
+    get firstName(){
+        return this._firstName;
+    }
+    
+    get lastName(){
+        return this._lastName;
+    }
+
+    get avatarUrl(){
+        return this._avatarUrl;
+    }
+
+    get bio(){
+        return this._bio;
+    }
+
+    get identityId(){
+        return this._identityId;
+    }
+
+    get createdAt(){
+        return this._createdAt;
+    }
+
+    get updatedAt(){
+        return this._updatedAt;
+    }
+
 
     static create(createPayload: createPayload){
         const userName = new UserName();

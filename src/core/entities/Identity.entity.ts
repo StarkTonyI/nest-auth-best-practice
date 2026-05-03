@@ -17,72 +17,69 @@ interface IdentityProps {
 }
 
 export class Identity {
-    private id: UserId
-    private passwordHash: string;
-    private email: Email;
-    private readonly createdAt: Date;
-    private updatedAt: Date
-    private profile?: Profile;
-    private session?: Session
-    private role: Role[] = []
+    private _id: UserId
+    private _passwordHash: string;
+    private _email: Email;
+    private _createdAt: Date;
+    private _updatedAt: Date
+    private _profile?: Profile;
+    private _session?: Session
+    private _role: Role[] = []
     
     constructor(props: IdentityProps){
-        this.id = props.id,
-        this.email = props.email,
-        this.passwordHash = props.passwordHash,
+        this._id = props.id,
+        this._email = props.email,
+        this._passwordHash = props.passwordHash,
     
-        this.createdAt = props.createdAt || new Date(),
-        this.updatedAt = props.updatedAt || new Date()
+        this._createdAt = props.createdAt || new Date(),
+        this._updatedAt = props.updatedAt || new Date()
 
-        this.profile = props.profile;
-        this.session = props.session;
-        this.role = props.role;
+        this._profile = props.profile;
+        this._session = props.session;
+        this._role = props.role;
     }
 
-    get getEmail(){
-        return this.email;
+    get id(){
+        return this._id;
     }
 
-    get getEmailValue(){
-        return this.email.value;
+    get email(){
+        return this._email;
     }
 
-    get getPasswordHash(){
-        return this.passwordHash;
+    get passwordHash(){
+        return this._passwordHash;
     }
 
-    get userCreateUpdateDate(){
-        return {
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt
-        };
+    get createdAt(){
+        return this._createdAt;
     }
 
-    get getId(){
-        return this.id;
+    get updatedAt(){
+        return this._updatedAt;
     }
 
-    get getIdValue(){
-        return this.id.value
+    get profile(){
+        return this._profile;
     }
 
-    get getProfile(){
-        return this.profile
+    get session(){
+        return this._session;
     }
 
-    get getRoles(){
-        return this.role;
+    get role(){
+        return this._role;
     }
 
     createNewProfile(firstName: FirstName, lastName: LastName){
         const profile = Profile.create({ firstName, lastName, identityId: this.id });
-        this.profile = profile;
+        this._profile = profile;
     }
 
     createNewSession(hashedToken: string, expirationDays: number){
         const identityId = this.id;
         const session = new Session({ hashedToken, identityId, expirationDays })
-        this.session = session;
+        this._session = session;
         return session;
     }
 
@@ -104,11 +101,11 @@ export class Identity {
     static toDetailResponse(identity: Identity){
         return {
             id: identity.id.value,
-            email: identity.getEmail.value,
+            email: identity.email.value,
             createdAt: identity.createdAt,
             updatedAt: identity.updatedAt,
-            profile: identity.getProfile ? Profile.toDetailResponse(identity.getProfile) : {},
-            role: identity.getRoles ? identity.getRoles.map(i => Role.toDetailResponse(i) ) : {}
+            profile: identity.profile ? Profile.toDetailResponse(identity.profile) : {},
+            role: identity.role ? identity.role.map(i => Role.toDetailResponse(i) ) : {}
         }
     }
 

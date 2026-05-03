@@ -20,10 +20,10 @@ export class IdentityRepository implements iIdentityRepository{
         try {
             const userCreated = await this.prisma.identity.create({
                 data: { 
-                    email: identity.getEmailValue,
-                    passwordHash: identity.getPasswordHash, 
+                    email: identity.email.value,
+                    passwordHash: identity.passwordHash, 
                     roles: {
-                        create: identity.getRoles.map((role)=>({
+                        create: identity.role.map((role)=>({
                             role: {
                                 connect: { id:role.id.value }     
                             }

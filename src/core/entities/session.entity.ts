@@ -12,38 +12,58 @@ interface SessionProps {
 }
 
 export class Session {
-    id: string;
-    hashedToken: string;
-    identityId: UserId;
-    createdAt: Date;
-    expiresAt: Date;
+    _id: string;
+    _hashedToken: string;
+    _identityId: UserId;
+    _createdAt: Date;
+    _expiresAt: Date;
 
     constructor(props: SessionProps){
         const now = new Date();
         props.expirationDays = Number(props.expirationDays)
-        this.id = props.id || uuidv4();
-        this.hashedToken = props.hashedToken;
-        this.identityId = props.identityId;
-        this.expiresAt = props.expiresAt ? props.expiresAt : new Date(now.getTime() + (props.expirationDays || 30)  * 24 * 60 * 60 * 1000);
-        this.createdAt = props.createdAt || new Date();
+        this._id = props.id || uuidv4();
+        this._hashedToken = props.hashedToken;
+        this._identityId = props.identityId;
+        this._expiresAt = props.expiresAt ? props.expiresAt : new Date(now.getTime() + (props.expirationDays || 30)  * 24 * 60 * 60 * 1000);
+        this._createdAt = props.createdAt || new Date();
     }
+
+    get id(){
+      return this._id;
+    }
+
+    get hashedToken(){
+      return this._hashedToken;
+    }
+
+    get identityId(){
+      return this._identityId;
+    }
+     
+    get expiresAt(){
+      return this._expiresAt;
+    }
+
+    get createdAt(){
+      return this._createdAt;
+    }
+
+
+
+    isExpired(){
+        return new Date() > this._expiresAt;
+    }
+
+
 
     static formDate(data: prismaSession){
       const identityId = UserId.create(data.identityId)
       return new Session({ ...data, identityId });
     }
 
-    isExpired(){
-        return new Date() > this.expiresAt;
-    }
 
-    get getIdentityId() {
-      return this.identityId.value
-    }
 
-    get gethashedToken(){
-      return this.hashedToken;
-    }
+   
 
 
 

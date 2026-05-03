@@ -18,6 +18,7 @@ export class AssingPermissionHandler implements ICommandHandler<AssingPermission
         if(!findRole){
             throw new EntityNotFoundException("role")
         }
+        
         const permission = Permission.create(action, resource, '');
 
         const createdPermission = await this.permissionRepository.create(permission);

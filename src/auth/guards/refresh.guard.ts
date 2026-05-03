@@ -7,7 +7,6 @@ export class RefreshJwtGuard implements CanActivate{
     constructor(){}
 
     async canActivate(context: ExecutionContext) {
-        const methods = { method: "Refresh token", module:"Refresh guard" };
         const req = context.switchToHttp().getRequest() as Request;
 
         const token = req.cookies?.refreshToken

@@ -33,7 +33,7 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
 
     const findUser = await this.identityRepository.findByEmail(email.value);
     if (findUser) {
-        throw new EntityAlreadyExistsException("User already exist", findUser.getIdValue);
+        throw new EntityAlreadyExistsException("User already exist", findUser.id.value);
     }
     const hash = await this.passwordHash.hash(password.value);
     const validatedUser = Identity.create(email, hash);
@@ -48,9 +48,9 @@ async execute(command: CommandCreateAuthEvent): Promise<any> {
 
     userCreated.createNewProfile(firstName, lastName);
 
-    if(!userCreated.getProfile) throw new Error("Profile is not created");
+    if(!userCreated.profile) throw new Error("Profile is not created");
         
-    await this.eventBus.publish(new authUserCreatedEvent(userCreated.getProfile));
+    await this.eventBus.publish(new authUserCreatedEvent(userCreated.profile));
 
     return Identity.toDetailResponse(userCreated);
 }}

@@ -23,34 +23,62 @@ interface RoleCreateInput {
 }
 
 export class Role { 
-    id: RoleId;
-    name: string;
-    description: string;
-    isDefault:boolean;
-    permission?: Permission[];
-    createdAt: Date;
-    updatedAt:Date;
+    _id: RoleId;
+    _name: string;
+    _description: string;
+    _isDefault:boolean;
+    _permission?: Permission[];
+    _createdAt: Date;
+    _updatedAt:Date;
 
     constructor(rolePayload: RoleInterface){
-        this.id = rolePayload.id;
-        this.name = rolePayload.name;
-        this.description = rolePayload.description;
-        this.isDefault = rolePayload.isDefault;
-        this.permission = rolePayload.permissions;
-        this.createdAt = rolePayload.createdAt ? rolePayload.createdAt : new Date();
-        this.updatedAt = rolePayload.updatedAt ? rolePayload.updatedAt : new Date();
+        this._id = rolePayload.id;
+        this._name = rolePayload.name;
+        this._description = rolePayload.description;
+        this._isDefault = rolePayload.isDefault;
+        this._permission = rolePayload.permissions;
+        this._createdAt = rolePayload.createdAt ? rolePayload.createdAt : new Date();
+        this._updatedAt = rolePayload.updatedAt ? rolePayload.updatedAt : new Date();
+    }
+
+
+    get id(){
+        return this.id;
+    }
+    
+    get name(){
+        return this.name;
+    }
+
+    get description(){
+        return this.description;
+    }
+
+    get isDefault(){
+        return this.isDefault;
+    }
+    get permission(){
+        return this.permission;
+    }
+
+    get createdAt(){
+        return this.createdAt;
+    }
+
+    get updatedAt(){
+        return this.updatedAt;
     }
 
     addPermission(permission: Permission[]){
-        this.permission = (this.permission  || []).concat(permission);
+        this._permission = (this._permission  || []).concat(permission);
     }
 
     removeDefault(){
-        if(!this.isDefault){
+        if(!this._isDefault){
             return;
         }
-        this.isDefault = false;
-        this.updatedAt = new Date();
+        this._isDefault = false;
+        this._updatedAt = new Date();
     }
 
 
