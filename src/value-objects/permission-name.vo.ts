@@ -2,15 +2,27 @@ import { InvalidInputException } from "src/exeption/domain-exeptions";
 import { SeedActionType, SeedResourceType } from "./permission-resourceAction.vo";
 
 export class PermissionName {
-  name: string;
-  action: string;
-  resource: string;
+  _name: string;
+  _action: string;
+  _resource: string;
   private constructor(actionResource: string) {
     const [action, resource] = actionResource.split(':') 
 
-    this.action = action;
-    this.resource = resource;
-    this.name = actionResource;
+    this._action = action;
+    this._resource = resource;
+    this._name = actionResource;
+  }
+
+  get action(){
+    return this._action;
+  }
+
+  get resource(){
+    return this._resource;
+  }
+
+  get uniqName(){
+    return this._name;
   }
 
   static create(action: SeedActionType, resource: SeedResourceType) {

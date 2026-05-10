@@ -2,6 +2,7 @@ import { RoleId } from "src/value-objects/role-id.vo";
 import { Identity } from "./Identity.entity";
 import { Permission } from "./permission.entity";
 import { Role as PrismaRole } from '@prisma/client'
+import { PermissionCollection } from "src/value-objects/collection/permission.collection";
 interface RoleInterface{
     id: RoleId, 
     name: string,
@@ -11,8 +12,8 @@ interface RoleInterface{
     createdAt?: Date,
     updatedAt?: Date
 
+    permissionsCollection: PermissionCollection
     users?: Identity[];
-    permissions?: Permission[]
     
 }
 
@@ -20,6 +21,7 @@ interface RoleCreateInput {
   name: string;
   description: string;
   isDefault: boolean;
+  permissionCollection: PermissionCollection
 }
 
 export class Role { 
@@ -27,7 +29,7 @@ export class Role {
     _name: string;
     _description: string;
     _isDefault:boolean;
-    _permission?: Permission[];
+    _permissionsCollection: PermissionCollection;
     _createdAt: Date;
     _updatedAt:Date;
 
@@ -36,41 +38,44 @@ export class Role {
         this._name = rolePayload.name;
         this._description = rolePayload.description;
         this._isDefault = rolePayload.isDefault;
-        this._permission = rolePayload.permissions;
+        this._permissionsCollection = rolePayload.permissionsCollection || [];
         this._createdAt = rolePayload.createdAt ? rolePayload.createdAt : new Date();
         this._updatedAt = rolePayload.updatedAt ? rolePayload.updatedAt : new Date();
     }
 
 
     get id(){
-        return this.id;
+        return this._id;
     }
-    
     get name(){
-        return this.name;
+        return this._name;
     }
-
     get description(){
-        return this.description;
+        return this._description;
     }
-
     get isDefault(){
-        return this.isDefault;
+        return this._isDefault;
     }
-    get permission(){
-        return this.permission;
+    get permissionCollection(){
+        return this._permissionsCollection;
     }
-
     get createdAt(){
-        return this.createdAt;
+        return this._createdAt;
     }
-
     get updatedAt(){
-        return this.updatedAt;
+        return this._updatedAt;
     }
 
-    addPermission(permission: Permission[]){
-        this._permission = (this._permission  || []).concat(permission);
+    isAdmin(){
+        return this._name === 'admin'
+    }
+
+    isDefaultRole(){
+        return !!this._isDefault;
+    }
+
+    addPermission(permission: Permission){
+        this._permissionsCollection.addPermission(permission);
     }
 
     removeDefault(){
@@ -81,17 +86,21 @@ export class Role {
         this._updatedAt = new Date();
     }
 
+    isPermissionAlreadyExist(permissions: Permission){
+        return this._permissionsCollection.permissionAlreadyExist(permissions)
+    }
 
     static create(rolePayload: RoleCreateInput){
        const id = RoleId.createId();
        const { name, description, isDefault } = rolePayload;
-       return new Role({ id, name, description, isDefault})
+       return new Role({ id, name, description, isDefault, permissionsCollection: rolePayload.permissionCollection})
     }
 
-    static formData(rolePayload: PrismaRole, permissions?: Permission[]){
+    static formData(rolePayload: PrismaRole, permissions: Permission[]){
         const { name, description, isDefault, createdAt, updatedAt } = rolePayload;
-        const id = RoleId.fromString(rolePayload.id)
-        return new Role({ id, name, description, isDefault, createdAt, updatedAt, permissions})
+        const id = RoleId.fromString(rolePayload.id);
+        const permissionsCollection = new PermissionCollection(permissions)
+        return new Role({ id, name, description, isDefault, createdAt, updatedAt, permissionsCollection: permissionsCollection})
     }
 
     static toDetailResponse(role: Role){
@@ -100,9 +109,15 @@ export class Role {
             name: role.name,
             description: role.description,
             isDefault: role.isDefault,
-            permission: role.permission ? role.permission.map(i => { 
-                return Permission.toDetailResopnse(i)
-             }) : [],
+            permission: [...role._permissionsCollection].map(i => {
+                return {
+                    id: i.id.value, 
+                    name: i.name, 
+                    description: i.description,
+                    createdAt: i.createdAt,
+                    updatedAt: i.updatedAt
+                }
+            }),
             createdAt: role.createdAt,
             updatedAt: role.updatedAt
         }

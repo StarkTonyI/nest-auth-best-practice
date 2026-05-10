@@ -35,7 +35,7 @@ export class PermissionRepository {
                 id: permission.id.value,
                 resource: permission.resourceAction.resource,
                 action: permission.resourceAction.action,
-                name: permission.name.name,
+                name: permission.name,
                 description: permission.description,
             }
         })

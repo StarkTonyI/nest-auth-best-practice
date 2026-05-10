@@ -33,7 +33,7 @@ export class Permission {
     }
 
     get name(){
-        return this._name
+        return this._name.uniqName;
     }
 
     get description(){
@@ -69,7 +69,7 @@ export class Permission {
     static toDetailResopnse(permission: Permission){
         return {
             id: permission.id.value,
-            name: permission.name.name,
+            name: permission.name,
             descriprion: permission.description,
             createdAt: permission.createdAt,
             updatedAt: permission.updatedAt

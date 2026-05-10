@@ -45,9 +45,23 @@ export class RoleRepository{
                 description: role.description,
                 isDefault: role.isDefault,
                 createdAt: role.createdAt,
-                updatedAt: role.updatedAt
+                updatedAt: role.updatedAt,
+                permissions: {
+                    create: [...role.permissionCollection].map((permission) => ({
+                        permission: {
+                            connect: { id: permission.id.value }
+                        }
+                    }))
+                }, 
+            }, include: {
+                permissions: {
+                    include: {
+                        permission: true
+                    }
+                }
             }
         })
+    
         return this.roleMapper(createdRole as UserWithRelations)
     }
 
@@ -79,18 +93,29 @@ export class RoleRepository{
     }
 
     async assignPermission(role: Role, permission: Permission){
-        return await this.prisma.rolePermission.create({
+        const assignPermission = await this.prisma.rolePermission.create({
             data:{
                 roleId: role.id.value,
                 permissionId: permission.id.value
+            }, include: {
+                role:{
+                    include:{
+                        permissions:{
+                            include:{
+                                permission: true
+                            }
+                        }
+                        
+                    }
+                }
             }
+            
         })
+        return this.roleMapper(assignPermission.role)
     }
 
     roleMapper(role: UserWithRelations): Role {
         const { id, name, description, isDefault, createdAt, updatedAt } = role;
-
-        console.log(role.permissions)
         const permissions = role.permissions.map((permissionRelate)=>{
             const permission = permissionRelate.permission;
             const { id, description, resource, action, createdAt, updatedAt } = permission;
@@ -102,13 +127,9 @@ export class RoleRepository{
                 updatedAt
             })
         })
-
-        console.log(permissions)
-
+        
         return Role.formData({ id, name, description,isDefault, createdAt, updatedAt }, permissions)
-
     }
-
 }
 
 

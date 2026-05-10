@@ -4,6 +4,7 @@ import { RoleRepository } from "src/infrastructure/repository/role-repository.se
 import { PermissionRepository } from "src/infrastructure/repository/permission-repository.service";
 import { EntityAlreadyExistsException, EntityNotFoundException } from "src/exeption/domain-exeptions";
 import { Role } from "src/core/entities/role.entity";
+import { PermissionCollection } from "src/value-objects/collection/permission.collection";
 
 @CommandHandler(CreateRoleCommand)
 export class CreateRoleHandler implements ICommandHandler<CreateRoleCommand> {
@@ -20,6 +21,7 @@ export class CreateRoleHandler implements ICommandHandler<CreateRoleCommand> {
         if(findRole){
             throw new EntityAlreadyExistsException("Role")
         }
+
         if(!findPermission){
             throw new EntityNotFoundException("Permission")
         }
@@ -30,13 +32,12 @@ export class CreateRoleHandler implements ICommandHandler<CreateRoleCommand> {
             findDefaultRole.removeDefault();
             await this.roleRepository.updateRole(findDefaultRole)
         }
+        const permissionCollection = new PermissionCollection([findPermission]);
+        const domainRole = Role.create({ name: role, description, isDefault: true, permissionCollection});
 
-        const domainRole = Role.create({ name: role, description, isDefault: true });
-        domainRole.addPermission([findPermission]);
+        const newRole = await this.roleRepository.createRole(domainRole);
 
-        await this.roleRepository.createRole(domainRole)
-
-        return Role.toDetailResponse(domainRole);
+        return Role.toDetailResponse(newRole)
 
     }
 

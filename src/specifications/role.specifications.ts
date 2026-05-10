@@ -3,6 +3,33 @@ import {  Specification } from "./base.specifications";
 
 export class IsDefaultRoleSpecification extends Specification<Role> {
     isSatisfiedBy(candidate: Role): boolean {
-        return candidate.isDefault
+        return candidate.isDefaultRole()
     }
 }
+
+export class isAdminRoleSpecification extends Specification<Role> {
+    isSatisfiedBy(candidate: Role): boolean {
+        return candidate.isAdmin()
+    }
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,13 +1,12 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { LoginEvent } from "./impl/login-auth.command";
 import { LoggerService } from "src/services/logger.service";
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Email } from "src/value-objects/email.vo";
 import { Password } from "src/value-objects/password.vo";
 import { type iIdentityRepository } from "src/interfaces/repository/identity-repository";
 import { type iSessionRepository } from "src/interfaces/repository/sessoin-repository";
 import { AuthenticationException, EntityNotFoundException } from "src/exeption/domain-exeptions";
-import e from "express";
 import { HasherService } from "src/auth/services/HasherService.service";
 import { TokenService } from "src/auth/services/TokenService.service";
 
@@ -49,6 +48,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginEvent>{
             await this.sessoinRepository.deleteSessionById(session.identityId.value)
             await this.sessoinRepository.createSession(session);
 
+            
             
             return {
                 id: findUser.id.value,
