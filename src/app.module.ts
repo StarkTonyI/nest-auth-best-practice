@@ -1,26 +1,27 @@
 import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './database/dataBase.module';
-import { PrismaService } from './database/dataBase.service';
-import { ApiConfigModule } from './configService/apiConfig.module';
-import { ResponseModule } from './service/response/response.module';
+import { AuthModule } from './presentation/modules/auth/auth.module';
+import { PrismaModule } from './infrastructure/database/dataBase.module';
+import { PrismaService } from './infrastructure/database/dataBase.service';
+import { ApiConfigModule } from './infrastructure/services/configService/apiConfig.module';
+import { ResponseModule } from './infrastructure/services/response/response.module';
 import { APP_FILTER, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
-import { LogginInterceptor } from './interceptor/logger.interceptor';
-import { ResponseInterceptor } from './interceptor/response.interceptor';
-import { ApiExeptionFilter } from './filters/api-exception.filter';
-import { ProfileModule } from './profile/profile.module';
-import { LoggerService } from './services/logger.service';
-import { LoggerMiddleware } from './middleware/logger.middleware';
-import { RequestIdMiddleware } from './middleware/request-id.middleware';
-import { ProfileController } from './profile/profile.controller';
-import { AuthController } from './auth/auth.controller';
-import { DomainExceptionFilter } from './filters/domain-exeption';
+import { LogginInterceptor } from './presentation/interceptor/logger.interceptor';
+import { ResponseInterceptor } from './presentation/interceptor/response.interceptor';
+import { ApiExeptionFilter } from './presentation/filters/api-exception.filter';
+import { LoggerService } from './infrastructure/logger/logger.service';
+import { LoggerMiddleware } from './presentation/middleware/logger.middleware';
+import { RequestIdMiddleware } from './presentation/middleware/request-id.middleware';
+import { ProfileController } from './presentation/modules/profile/profile.controller';
+import { DomainExceptionFilter } from './presentation/filters/domain-exeption';
+import { ProfileModule } from './presentation/modules/profile/profile.module';
+import { AuthController } from './presentation/modules/auth/auth.controller';
+import RoleModule from './presentation/modules/role/role.module';
 
 @Global()
 @Module({
-  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule],
+  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule, RoleModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, Reflector, LoggerService, 
     {

@@ -1,5 +1,5 @@
 import { Session as prismaSession } from "@prisma/client";
-import { UserId } from "src/value-objects/userid.vo";
+import { UserId } from "src/core/value-objects/userid.vo";
 import { v4 as uuidv4 } from 'uuid';
 
 interface SessionProps {

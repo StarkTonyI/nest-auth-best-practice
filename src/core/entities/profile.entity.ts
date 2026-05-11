@@ -1,5 +1,5 @@
-import { FirstName, LastName, Name, UserName } from "src/value-objects/name.vo";
-import { UserId } from "src/value-objects/userid.vo";
+import { FirstName, LastName, Name, UserName } from "src/core/value-objects/name.vo";
+import { UserId } from "src/core/value-objects/userid.vo";
 
 interface ProfileProps {
   id?: UserId;

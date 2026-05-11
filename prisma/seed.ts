@@ -2,7 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from 'bcrypt'
 import { PrismaPg } from "@prisma/adapter-pg";
-import { SeedActionType, SeedResourceType } from "src/value-objects/permission-resourceAction.vo";
+import { SeedActionType, SeedResourceType } from "src/core/value-objects/permission-resourceAction.vo";
 
 interface RolePermission {
   roleId: string,

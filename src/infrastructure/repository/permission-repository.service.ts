@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Permission as PrismaPermission } from "@prisma/client";
 import { Permission } from "src/core/entities/permission.entity";
-import { PrismaService } from "src/database/dataBase.service";
-import { ThrottlingException } from "src/exeption/domain-exeptions";
+import { PrismaService } from "src/infrastructure/database/dataBase.service";
+import { ThrottlingException } from "src/core/exeption/domain-exeptions";
 
 @Injectable()
 export class PermissionRepository {

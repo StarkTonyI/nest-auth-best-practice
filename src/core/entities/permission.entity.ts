@@ -1,6 +1,6 @@
-import { PermissionId } from "src/value-objects/permission-id.vo";
-import { PermissionName } from "src/value-objects/permission-name.vo";
-import { ActionResource } from "src/value-objects/permission-resourceAction.vo";
+import { PermissionId } from "src/core/value-objects/permission-id.vo";
+import { PermissionName } from "src/core/value-objects/permission-name.vo";
+import { ActionResource } from "src/core/value-objects/permission-resourceAction.vo";
 
 interface PermissionPayload {
     id: PermissionId;

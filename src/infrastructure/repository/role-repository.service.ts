@@ -3,7 +3,7 @@ import { Prisma, Role as PrismaRole } from "@prisma/client";
 import { permission } from "process";
 import { Permission } from "src/core/entities/permission.entity";
 import { Role } from "src/core/entities/role.entity";
-import { PrismaService } from "src/database/dataBase.service";
+import { PrismaService } from "src/infrastructure/database/dataBase.service";
 
 type UserWithRelations = Prisma.RoleGetPayload<{
  include: { permissions:{ include: { permission: true } } }

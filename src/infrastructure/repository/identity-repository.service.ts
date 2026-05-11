@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "src/database/dataBase.service";
+import { PrismaService } from "src/infrastructure/database/dataBase.service";
 import { defaultIdentitySelect } from '../../types/prisma-user'
 import { Prisma } from "@prisma/client";
 import { Identity } from "src/core/entities/Identity.entity";
-import { iIdentityRepository } from "src/interfaces/repository/identity-repository";
+import { iIdentityRepository } from "src/core/repositories/identity-repository";
 import { Permission } from "src/core/entities/permission.entity";
 import { Role } from "src/core/entities/role.entity";
 

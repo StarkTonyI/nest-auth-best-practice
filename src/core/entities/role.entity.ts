@@ -1,8 +1,8 @@
-import { RoleId } from "src/value-objects/role-id.vo";
+import { RoleId } from "src/core/value-objects/role-id.vo";
 import { Identity } from "./Identity.entity";
 import { Permission } from "./permission.entity";
 import { Role as PrismaRole } from '@prisma/client'
-import { PermissionCollection } from "src/value-objects/collection/permission.collection";
+import { PermissionCollection } from "src/core/value-objects/collection/permission.collection";
 interface RoleInterface{
     id: RoleId, 
     name: string,

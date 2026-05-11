@@ -1,8 +1,8 @@
-import { Email } from "src/value-objects/email.vo";
-import { UserId } from "src/value-objects/userid.vo";
+import { Email } from "src/core/value-objects/email.vo";
+import { UserId } from "src/core/value-objects/userid.vo";
 import { Profile } from "./profile.entity";
 import { Session } from "./session.entity";
-import { FirstName, LastName } from "src/value-objects/name.vo";
+import { FirstName, LastName } from "src/core/value-objects/name.vo";
 import { Role } from "./role.entity";
 interface IdentityProps {
    id: UserId;

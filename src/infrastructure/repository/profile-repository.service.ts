@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
-import { PrismaService } from "src/database/dataBase.service";
+import { PrismaService } from "src/infrastructure/database/dataBase.service";
 import { Prisma, Profile } from "@prisma/client";
-import { iProfileRepository } from "src/interfaces/repository/profile-repository";
-import { createProfilePayload } from "src/dto/request/profile/profile.dto";
+import { iProfileRepository } from "src/core/repositories/profile-repository";
+import { createProfilePayload } from "src/application/dtos/request/profile/profile.dto";
 
 @Injectable()
 export class ProfileRepository implements iProfileRepository{

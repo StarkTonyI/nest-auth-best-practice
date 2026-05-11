@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Session as PrismaSession } from "@prisma/client";
 import { Session } from "src/core/entities/session.entity";
-import { PrismaService } from "src/database/dataBase.service";
-import { iSessionRepository } from "src/interfaces/repository/sessoin-repository";
+import { PrismaService } from "src/infrastructure/database/dataBase.service";
+import { iSessionRepository } from "src/core/repositories/sessoin-repository";
 
 @Injectable()
 export class SessionRepository implements iSessionRepository{

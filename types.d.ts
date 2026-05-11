@@ -1,4 +1,4 @@
-import { JwtPayload } from "src/interfaces/jwtPayload.interface";
+import { JwtPayload } from "src/shared/interfaces/jwtPayload.interface";
 import { SafeUser } from "src/types/prisma-user";
 
 declare global {
