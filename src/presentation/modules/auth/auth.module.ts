@@ -18,6 +18,7 @@ import { RefreshTokenCommandHandler } from "../../../application/commands/auth/s
 import { AssingPermissionHandler } from "../../../application/commands/role/assign-permission.handler";
 import { RegisterCommandHandler } from "src/application/commands/auth/regiser-auth.handler";
 import RoleModule from "../role/role.module";
+import { LogoutAuthHandler } from "src/application/commands/auth/logout-auth.hander";
 @Module({
     imports: [
         CqrsModule,
@@ -38,7 +39,7 @@ import RoleModule from "../role/role.module";
     controllers: [AuthController],
     providers: [
         RegisterCommandHandler,
-        LoginCommandHandler, RefreshTokenCommandHandler, HasherService, TokenService,
+        LoginCommandHandler, RefreshTokenCommandHandler, HasherService, TokenService, LogoutAuthHandler,
         {
             provide: 'iIdentityRepository',
             useClass: IdentityRepository

@@ -25,6 +25,8 @@ export class AccessJwtGuard implements CanActivate{
         const secret = this.config.authConfig.jwtSecret;
      
         const token = this.jwtFromRequest(req);
+
+
         if(!token) {
             throw new AuthenticationException("Token invalid or not exist.", { reason: "Token is not exist in base", entityId:'' });
         }
@@ -33,7 +35,7 @@ export class AccessJwtGuard implements CanActivate{
                 secret: secret, 
             }) as JwtPayload;
             
-            if(!payloadJwt.userId){
+            if(!payloadJwt.id){
                 throw new AuthenticationException("Token invalid or not exist", { reason: "Invalid payload", entityId: ''});
             }
             req[REQ.user] = payloadJwt;

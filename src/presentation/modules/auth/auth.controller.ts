@@ -1,17 +1,18 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common"
+import { Body, Controller, Get, Injectable, Post, UseGuards } from "@nestjs/common"
 import { CommandBus } from "@nestjs/cqrs"
 import { ChangePasswordCommand } from "src/application/commands/auth/impl/change-passwrod.command"
 import { LoginCommand } from "src/application/commands/auth/impl/login-auth.command"
+import { LogoutCommand } from "src/application/commands/auth/impl/logout-auth.command"
 import { RefreshTokenCommand } from "src/application/commands/auth/impl/refresh-token.command"
 import {  RegisterCommand } from "src/application/commands/auth/impl/register-auth.command"
-import { ChangePasswordDto } from "src/application/dtos/request/auth/changePassword.dto"
+import { ChangePasswordDto } from "src/application/dtos/request/auth/change-password.dto"
 import { AccessJwtGuard } from "src/presentation/guards/access.guard"
 import { RefreshJwtGuard } from "src/presentation/guards/refresh.guard"
 import { RawToken } from "src/shared/decorator/rawToken.decorator"
 import { ReqUser } from "src/shared/decorator/reqUser.decorator"
 import { ResponseMessage } from "src/shared/decorator/response-matadata.decorator"
 import { TokenMetaData } from "src/shared/decorator/tokens.decorator"
-
+@Injectable()
 @Controller('auth')
 export class AuthController {
     constructor(private readonly commandBus: CommandBus){}
@@ -45,6 +46,13 @@ export class AuthController {
         return this.commandBus.execute(new RefreshTokenCommand(token))
     
     }
+    @UseGuards(AccessJwtGuard)
+    @ResponseMessage("Logout user succesfully")
+    @Get('/logout') 
+    async logout(@ReqUser("id") id){
+        return this.commandBus.execute(new LogoutCommand(id))
+}
+
 
 }
 

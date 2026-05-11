@@ -48,8 +48,6 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand>{
             await this.sessoinRepository.deleteSessionById(session.identityId.value)
             await this.sessoinRepository.createSession(session);
 
-            
-            
             return {
                 id: findUser.id.value,
                 access_token,

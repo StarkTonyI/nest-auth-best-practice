@@ -3,9 +3,10 @@ import { createParamDecorator, ExecutionContext, UseGuards } from "@nestjs/commo
 interface ReqDecorator {
     id: string;
     email: string;
+    role: string;
 }
 
-export const ReqUser = createParamDecorator((reqData: keyof ReqDecorator  | null, ctx: ExecutionContext)=>{
+export const ReqUser = createParamDecorator((reqData: keyof ReqDecorator | null, ctx: ExecutionContext)=>{
     const req = ctx.switchToHttp().getRequest();
     const { user } = req;
     return reqData ? user[reqData] : user;
