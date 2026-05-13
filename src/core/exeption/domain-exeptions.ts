@@ -86,3 +86,27 @@ export class InvalidThrottleIdentifierException extends DomainException {
     super('Throttle identifier cannot be empty', HttpStatus.BAD_REQUEST);
   }
 }
+
+
+
+// Health check exceptions
+export class HealthCheckException extends DomainException {
+  constructor(message: string) {
+    super(message, HttpStatus.SERVICE_UNAVAILABLE);
+    this.name = 'HealthCheckException';
+  }
+}
+
+export class DatabaseConnectionException extends HealthCheckException {
+  constructor(message: string) {
+    super(`Database connection error: ${message}`);
+    this.name = 'DatabaseConnectionException';
+  }
+}
+
+export class ConfigurationException extends HealthCheckException {
+  constructor(message: string) {
+    super(`Configuration error: ${message}`);
+    this.name = 'ConfigurationException';
+  }
+}

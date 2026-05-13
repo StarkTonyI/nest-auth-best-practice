@@ -19,7 +19,8 @@ export class DomainExceptionFilter implements ExceptionFilter {
             date:new Date(), 
             details: exception.details, 
             exceptionName: exception.name, 
-            stack: exception.stack})
+            stack: exception.stack
+        })
 
         return response.status(status).json({ 
             message: exception.getResponse(),

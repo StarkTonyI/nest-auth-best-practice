@@ -4,7 +4,6 @@ import { LogoutCommand } from "./impl/logout-auth.command";
 import { type iIdentityRepository } from "src/core/repositories/identity-repository";
 import { EntityNotFoundException } from "src/core/exeption/domain-exeptions";
 import { type iSessionRepository } from "src/core/repositories/sessoin-repository";
-import { Session } from "src/core/entities/session.entity";
 
 @Injectable()
 @CommandHandler(LogoutCommand)

@@ -18,10 +18,11 @@ import { DomainExceptionFilter } from './presentation/filters/domain-exeption';
 import { ProfileModule } from './presentation/modules/profile/profile.module';
 import { AuthController } from './presentation/modules/auth/auth.controller';
 import RoleModule from './presentation/modules/role/role.module';
+import AdminModule from './presentation/modules/admin/admin.module';
 
 @Global()
 @Module({
-  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule, RoleModule],
+  imports: [AuthModule, PrismaModule, ApiConfigModule, ResponseModule, ProfileModule, RoleModule, AdminModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, Reflector, LoggerService, 
     {
